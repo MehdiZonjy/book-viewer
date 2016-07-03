@@ -1,15 +1,18 @@
 import {SimpleColorShader} from '../shaders/simple-color-shader';
+import {SimpleTextureShader} from '../shaders/simple-texture-shader';
 import {Camera} from './camera';
 export abstract class BaseGame {
     protected mGl: WebGLRenderingContext;
     protected mCanvas: HTMLCanvasElement;
-    protected mSimpleShader:SimpleColorShader;
+    protected mSimpleColorShader:SimpleColorShader;
+    protected mSimpleTextureShader: SimpleTextureShader;
     protected mCamera:Camera;
     private mLastFrameUpdate;
     constructor(options) {
         this.mCanvas = createCanvas();
         this.mGl = createWebGLContext(this.mCanvas);
-        this.mSimpleShader = new SimpleColorShader(this.mGl);
+        this.mSimpleColorShader = new SimpleColorShader(this.mGl);
+        this.mSimpleTextureShader=new SimpleTextureShader(this.mGl);
         this.mCamera=new Camera(this.mCanvas);
         requestAnimationFrame(this.mainLoop);
     }
@@ -26,6 +29,13 @@ export abstract class BaseGame {
         this.mLastFrameUpdate = now;
 
         this.mGl.viewport(0,0,this.mCanvas.width,this.mCanvas.height);
+
+        //TODO add frame skipping and split update into onUpdate and onDraw
+        /*(while deltaTime > 1000/60)
+            update
+            deltaTime -=1000/60
+
+        */
         this.update(deltaTime);
 
 

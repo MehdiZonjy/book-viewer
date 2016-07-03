@@ -1,8 +1,8 @@
 import {IDisposable} from  '../interfaces';
 import {IShader} from './interfaces';
-const POSITION = "mPosition";
-const VIEWWORLD='mViewWorld';
-const PROJECTION='mProjection';
+const POSITION = "aPosition";
+const VIEWWORLD='uViewWorld';
+const PROJECTION='uProjection';
 export abstract class BaseShader implements IDisposable, IShader {
     private mVertexShader;
     private mFragmentShader;
@@ -36,7 +36,9 @@ export abstract class BaseShader implements IDisposable, IShader {
 
     public use() {
         this.gl.useProgram(this.mShaderProgram);
-
+    }
+    public unuse(){
+        this.gl.useProgram(null);
     }
     public dispose() {
         this.gl.deleteProgram(this.mShaderProgram);
@@ -50,7 +52,6 @@ export abstract class BaseShader implements IDisposable, IShader {
         this.mPositionLocation = this.gl.getAttribLocation(this.mShaderProgram, POSITION);
         this.mProjectionLocation = this.gl.getUniformLocation(this.mShaderProgram, PROJECTION);
         this.mViewWorldLocation = this.gl.getUniformLocation(this.mShaderProgram, VIEWWORLD);
-        this.gl.enableVertexAttribArray(this.mPositionLocation);
     }
 
 
@@ -60,6 +61,17 @@ export abstract class BaseShader implements IDisposable, IShader {
     setViewWorld(viewWorld){
         this.gl.uniformMatrix3fv(this.ViewWorldLocation,false,viewWorld);
 
+    }
+
+    beginShader(projection){
+        this.use();
+        this.setProjection(projection);
+        this.gl.enableVertexAttribArray(this.mPositionLocation);
+    }
+
+    endShader(){
+        this.gl.disableVertexAttribArray(this.mPositionLocation);
+        this.unuse();
     }
 
         protected abstract readShaderAttributes();

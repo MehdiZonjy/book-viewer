@@ -86,8 +86,12 @@ export class ColoredSprite extends BaseSprite implements IDisposable {
         //decreases instances count
         spritesCount--;
         //if there are no more instances using the VBO then delete it.
-        if (spritesCount == 0)
-            this.gl.deleteBuffer(vbo);
+        if (spritesCount == 0) {
+
+            vbo.dispose();// this.mGl.deleteBuffer(vbo);
+            vbo = null;// gl.deleteBuffer(vbo);
+
+        }
     }
 
 }

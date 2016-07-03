@@ -5,6 +5,10 @@ export interface IShader{
 
     setProjection(projection);
     setViewWorld(viewWorld);
+    beginShader(projection);
+    endShader();
+
+
 }
 
 export interface PositionShader extends IShader{
@@ -17,5 +21,5 @@ export interface PositionColorShader extends PositionShader{
 }
 export interface PositionTexcoordShader extends PositionShader{
     TexcoordLocation:number;
-    load
+    setTexture(texture);
 }

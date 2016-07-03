@@ -1,27 +1,27 @@
 import {BaseShader} from './base-shader';
 import {PositionColorShader} from './interfaces';
 const VERTEX_SHADER = `
-    attribute vec2 mPosition; //the position of the point
-    uniform mat3 mProjection;
-    uniform mat3 mViewWorld;
+    attribute vec2 aPosition; //the position of the point
+    uniform mat3 uProjection;
+    uniform mat3 uViewWorld;
     void main(void){
-        vec3 pos = vec3(mPosition,1);
-        gl_Position = vec4((mProjection*mViewWorld*pos).xy,0.0,1.0);
+        vec3 pos = vec3(aPosition,1);
+        gl_Position = vec4((uProjection*uViewWorld*pos).xy,0.0,1.0);
     }
 
 `;
 
 const FRAGMENT_SHADER = `
     precision mediump float;
-    uniform vec4 mColor;
+    uniform vec4 uColor;
     void main(void){
-        gl_FragColor = mColor;
+        gl_FragColor = uColor;
     }
 `;
 
 
-const POSITION = "mPosition";
-const COLOR = "mColor"
+//const POSITION = "aPosition";
+const COLOR = "uColor"
 
 export class SimpleColorShader extends BaseShader implements PositionColorShader {
     protected mColorLocation;
