@@ -1,4 +1,5 @@
 import  {SCALE_X,SCALE_Y,TRANSLATION_X,TRANSLATION_Y} from '../math';
+import {mat3,vec2} from 'gl-matrix';
 
 export abstract class MovableObject {
 

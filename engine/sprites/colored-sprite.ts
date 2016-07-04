@@ -2,6 +2,8 @@ import {IDisposable} from '../core';
 import {PositionVBO} from '../vertex-buffers';
 import {PositionColorShader} from '../shaders';
 import {BaseSprite} from './';
+import {mat3} from 'gl-matrix';
+
 /*const QUAD_VERTICES = [
     1, 1,
     -1, 1,

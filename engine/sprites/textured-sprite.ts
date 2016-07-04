@@ -3,7 +3,7 @@ import {PositionTexcoordVBO} from '../vertex-buffers/';
 import {PositionVBO} from '../vertex-buffers/';
 import {PositionTexcoordShader} from '../shaders/';
 import {BaseSprite} from './';
-
+import {mat3} from 'gl-matrix';
 const QUAD_VERTICES = [
     1, 0,
     1, 0,

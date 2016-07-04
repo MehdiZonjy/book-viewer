@@ -1,5 +1,8 @@
 import {SimpleColorShader,SimpleTextureShader} from '../shaders';
 import {Camera} from './';
+/// <reference path="../gl-matrix.d.ts" />
+
+
 export abstract class BaseGame {
     protected mGl: WebGLRenderingContext;
     protected mCanvas: HTMLCanvasElement;
