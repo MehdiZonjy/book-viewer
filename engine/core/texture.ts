@@ -1,4 +1,4 @@
-import {IDisposable} from '../interfaces';
+import {IDisposable} from './';
 export class Texture implements IDisposable {
   private mTextureHandler: WebGLTexture;
   private mWidth: number;

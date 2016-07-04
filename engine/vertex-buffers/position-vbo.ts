@@ -1,5 +1,5 @@
 import {ReadOnlyVBO} from './readonly-vbo';
-import {PositionShader} from '../shaders/interfaces';
+import {PositionShader} from '../shaders/';
 export class PositionVBO extends ReadOnlyVBO {
     constructor( gl: WebGLRenderingContext,  glBufferType, bufferData: number[], bufferDataType) {
         super(gl, glBufferType, bufferData, bufferDataType);

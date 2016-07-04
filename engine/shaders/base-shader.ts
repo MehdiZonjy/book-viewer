@@ -1,5 +1,5 @@
-import {IDisposable} from  '../interfaces';
-import {IShader} from './interfaces';
+import {IDisposable} from  '../core/';
+import {IShader} from './';
 const POSITION = "aPosition";
 const VIEWWORLD='uViewWorld';
 const PROJECTION='uProjection';

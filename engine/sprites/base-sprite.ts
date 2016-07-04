@@ -1,4 +1,4 @@
-import {MovableObject} from  '../core/movable-object';
+import {MovableObject} from  '../core/';
 export class BaseSprite extends MovableObject {
 
     public setWidth(width){

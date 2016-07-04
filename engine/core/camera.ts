@@ -1,4 +1,4 @@
-import {TRANSLATION_X,TRANSLATION_Y,SCALE_X,SCALE_Y}  from '../math/matrix-helper';
+import {TRANSLATION_X,TRANSLATION_Y,SCALE_X,SCALE_Y}  from '../math';
 import {MovableObject} from './movable-object';
 
 //TODO handle canvas size change event

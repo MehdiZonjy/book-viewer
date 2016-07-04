@@ -1,4 +1,4 @@
-import {IDisposable} from '../interfaces';
+import {IDisposable} from '../core';
 
 export  class ReadOnlyVBO implements IDisposable {
 

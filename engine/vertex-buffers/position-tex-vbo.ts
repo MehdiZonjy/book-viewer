@@ -1,5 +1,5 @@
 import {ReadOnlyVBO} from './readonly-vbo';
-import {PositionTexcoordShader} from '../shaders/interfaces';
+import {PositionTexcoordShader} from '../shaders';
 export class PositionTexcoordVBO extends ReadOnlyVBO {
  //   private mTxtBuffer;
     constructor(gl: WebGLRenderingContext, glBufferType, bufferData: number[], bufferDataType) {

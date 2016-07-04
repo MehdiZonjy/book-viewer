@@ -1,4 +1,3 @@
-import {} from '../vertex-buffers/'
 export interface IShader{
     ViewWorldLocation;
     ProjectionLocation;

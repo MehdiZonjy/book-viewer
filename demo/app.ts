@@ -1,9 +1,6 @@
-import {BaseGame}from '../engine/core/base-game';
-import {ColoredSprite} from '../engine/sprites/colored-sprite';
-import {FPSCounter} from '../engine/misc/fps-counter';
-import {Texture} from '../engine/core/texture';
-import {SimpleTextureShader} from '../engine/shaders/simple-texture-shader';
-import {TexturedSprite} from '../engine/sprites/textured-sprite';
+import {BaseGame,Texture}from '../engine/core/';
+import {ColoredSprite,TexturedSprite} from '../engine/sprites/';
+import {FPSCounter} from '../engine/misc/';
 //var glmatrix = require('gl-matrix');
 //import {vec3} from 'glmatrix';
 export class DemoGame extends BaseGame {

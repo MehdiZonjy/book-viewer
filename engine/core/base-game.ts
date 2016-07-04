@@ -1,6 +1,5 @@
-import {SimpleColorShader} from '../shaders/simple-color-shader';
-import {SimpleTextureShader} from '../shaders/simple-texture-shader';
-import {Camera} from './camera';
+import {SimpleColorShader,SimpleTextureShader} from '../shaders';
+import {Camera} from './';
 export abstract class BaseGame {
     protected mGl: WebGLRenderingContext;
     protected mCanvas: HTMLCanvasElement;

@@ -1,5 +1,4 @@
-import {BaseShader} from './base-shader';
-import {PositionColorShader} from './interfaces';
+import {BaseShader,PositionColorShader} from './';
 const VERTEX_SHADER = `
     attribute vec2 aPosition; //the position of the point
     uniform mat3 uProjection;
@@ -20,7 +19,6 @@ const FRAGMENT_SHADER = `
 `;
 
 
-//const POSITION = "aPosition";
 const COLOR = "uColor"
 
 export class SimpleColorShader extends BaseShader implements PositionColorShader {

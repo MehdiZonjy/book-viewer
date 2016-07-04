@@ -1,5 +1,4 @@
-import {BaseShader} from './base-shader';
-import {PositionTexcoordShader} from './interfaces';
+import {BaseShader,PositionTexcoordShader} from './';
 const VERTEX_SHADER = `
     attribute vec2 aPosition; //the position of the point
     attribute vec2 aTexCoord;

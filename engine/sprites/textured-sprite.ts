@@ -1,13 +1,12 @@
-import {IDisposable} from '../interfaces';
-import {PositionTexcoordVBO} from '../vertex-buffers/position-tex-vbo';
-import {PositionVBO} from '../vertex-buffers/position-vbo';
-import {PositionTexcoordShader} from '../shaders/interfaces';
-import {BaseSprite} from './base-sprite';
-import {Texture} from '../core/texture';
+import {IDisposable, Texture} from '../core';
+import {PositionTexcoordVBO} from '../vertex-buffers/';
+import {PositionVBO} from '../vertex-buffers/';
+import {PositionTexcoordShader} from '../shaders/';
+import {BaseSprite} from './';
 
 const QUAD_VERTICES = [
     1, 0,
-    1 ,0,
+    1, 0,
     0, 0,
     0, 0,
     1, 1,
@@ -27,7 +26,7 @@ var spritesCount = 0;
 
 export class TexturedSprite extends BaseSprite implements IDisposable {
     private mViewWorld;
-    constructor(private mGl: WebGLRenderingContext,private mTexture:Texture) {
+    constructor(private mGl: WebGLRenderingContext, private mTexture: Texture) {
         super();
         initVBO(mGl);
         spritesCount++;
@@ -53,10 +52,9 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
         //decreases instances count
         spritesCount--;
         //if there are no more instances using the VBO then delete it.
-        if (spritesCount == 0)
-        {
-           vbo.dispose();// this.mGl.deleteBuffer(vbo);
-            vbo=null;
+        if (spritesCount == 0) {
+            vbo.dispose();// this.mGl.deleteBuffer(vbo);
+            vbo = null;
         }
     }
 

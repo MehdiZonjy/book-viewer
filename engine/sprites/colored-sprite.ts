@@ -1,7 +1,7 @@
-import {IDisposable} from '../interfaces';
-import {PositionVBO} from '../vertex-buffers/position-vbo';
-import {PositionColorShader} from '../shaders/interfaces';
-import {BaseSprite} from './base-sprite';
+import {IDisposable} from '../core';
+import {PositionVBO} from '../vertex-buffers';
+import {PositionColorShader} from '../shaders';
+import {BaseSprite} from './';
 /*const QUAD_VERTICES = [
     1, 1,
     -1, 1,
