@@ -1,4 +1,4 @@
-import {TRANSLATION_X,TRANSLATION_Y,SCALE_X,SCALE_Y}  from '../math';
+import {MatrixHelper}  from '../math';
 import {MovableObject} from './movable-object';
 import {mat3,GLM} from 'gl-matrix';
 

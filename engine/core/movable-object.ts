@@ -1,4 +1,4 @@
-import  {SCALE_X,SCALE_Y,TRANSLATION_X,TRANSLATION_Y} from '../math';
+import  {MatrixHelper} from '../math';
 import {mat3,vec2} from 'gl-matrix';
 
 export abstract class MovableObject {
@@ -29,19 +29,19 @@ export abstract class MovableObject {
           this.mIsTransformationDirty = true;
       }*/
     public get PositionX() {
-        return this.mTransformation[TRANSLATION_X];
+        return this.mTransformation[MatrixHelper.TRANSLATION_X];
     }
     public get PositionY() {
-        return this.mTransformation[TRANSLATION_X];
+        return this.mTransformation[MatrixHelper.TRANSLATION_X];
     }
     public get Position() {
-        return [this.mTransformation[TRANSLATION_X], this.mTransformation[TRANSLATION_Y]];
+        return [this.mTransformation[MatrixHelper.TRANSLATION_X], this.mTransformation[MatrixHelper.TRANSLATION_Y]];
     }
     public get ScaleX() {
-        return this.mTransformation[SCALE_X];
+        return this.mTransformation[MatrixHelper.SCALE_X];
     }
     public get ScaleY() {
-        return this.mTransformation[SCALE_Y];
+        return this.mTransformation[MatrixHelper.SCALE_Y];
     }
     public get InverseTransform() {
         if (this.mIsTransformationDirty)
