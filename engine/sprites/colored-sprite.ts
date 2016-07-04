@@ -2,39 +2,7 @@ import {IDisposable} from '../core';
 import {PositionVBO} from '../vertex-buffers';
 import {PositionColorShader} from '../shaders';
 import {BaseSprite} from './';
-import {mat3} from 'gl-matrix';
-
-/*const QUAD_VERTICES = [
-    1, 1,
-    -1, 1,
-    1, -1,
-    -1, -1
-];
-*/
-/*
-const QUAD_VERTICES = [
-    1, 1,
-    0, 1,
-    1, 0,
-    0, 0
-];
-*/
-/*
-const QUAD_VERTICES = [
-    0.5, 0.5,
-    -0.5, 0.5,
-    0.5, -0.5,
-    -0.5, -0.5
-];
-*/
-/*
-
-const QUAD_VERTICES = [
-  1, 0,
-    0, 0,
-    1, -1,
-    0, -1
-];*/
+import {mat3,GLM} from 'gl-matrix';
 
 
 const QUAD_VERTICES = [
@@ -71,7 +39,7 @@ export class ColoredSprite extends BaseSprite implements IDisposable {
 
     }
 
-    prepareShader(shader: PositionColorShader, view) {
+    private prepareShader(shader: PositionColorShader, view:GLM.IArray) {
 
         mat3.multiply(this.mViewWorld, view, this.Transformations);
         shader.setViewWorld(this.mViewWorld);
@@ -79,7 +47,8 @@ export class ColoredSprite extends BaseSprite implements IDisposable {
         vbo.loadToShader(shader);
     }
 
-    draw() {
+    draw(shader: PositionColorShader, view:GLM.IArray) {
+        this.prepareShader(shader,view);
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     }
 

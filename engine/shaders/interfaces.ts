@@ -1,10 +1,11 @@
+import {GLM} from 'gl-matrix';
 export interface IShader{
     ViewWorldLocation;
     ProjectionLocation;
 
-    setProjection(projection);
-    setViewWorld(viewWorld);
-    beginDraw(projection);
+    setProjection(projection:GLM.IArray|Float32Array);
+    setViewWorld(viewWorld:GLM.IArray|Float32Array);
+    beginDraw(projection:GLM.IArray|Float32Array);
     endDraw();
 
 
@@ -14,7 +15,7 @@ export interface PositionShader extends IShader{
      PositionLocation:number;
 }
 export interface PositionColorShader extends PositionShader{
-    //ColorLocation:number;
+    ColorLocation:number;
     setColor(r,g,b,a);
     getColor();
 }

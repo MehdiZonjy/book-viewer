@@ -3,7 +3,7 @@ import {PositionTexcoordVBO} from '../vertex-buffers/';
 import {PositionVBO} from '../vertex-buffers/';
 import {PositionTexcoordShader} from '../shaders/';
 import {BaseSprite} from './';
-import {mat3} from 'gl-matrix';
+import {mat3,GLM} from 'gl-matrix';
 const QUAD_VERTICES = [
     1, 0,
     1, 0,
@@ -14,7 +14,7 @@ const QUAD_VERTICES = [
     0, 1,
     0, 1
 ];
-//the vertex buffer is going to be shared between all ColoredSprite instances.
+//the vertex buffer is going to be shared between all TexturedSprite instances.
 var vbo: PositionTexcoordVBO;
 function initVBO(gl: WebGLRenderingContext) {
     if (vbo)
@@ -25,7 +25,7 @@ function initVBO(gl: WebGLRenderingContext) {
 var spritesCount = 0;
 
 export class TexturedSprite extends BaseSprite implements IDisposable {
-    private mViewWorld;
+    private mViewWorld:GLM.IArray;
     constructor(private mGl: WebGLRenderingContext, private mTexture: Texture) {
         super();
         initVBO(mGl);
@@ -34,7 +34,7 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
     }
 
 
-    prepareShader(shader: PositionTexcoordShader, view) {
+    private  prepareShader(shader: PositionTexcoordShader, view:GLM.IArray) {
 
         mat3.multiply(this.mViewWorld, view, this.Transformations);
         shader.setViewWorld(this.mViewWorld);
@@ -42,7 +42,8 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
         this.mTexture.loadToShader();
     }
 
-    draw() {
+    draw(shader: PositionTexcoordShader, view:GLM.IArray) {
+        this.prepareShader(shader,view);
         this.mGl.drawArrays(this.mGl.TRIANGLE_STRIP, 0, 4);
     }
 

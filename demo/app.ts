@@ -58,8 +58,8 @@ export class DemoGame extends BaseGame {
         */
         for (let i = 0, l = this.sprites.length; i < l; i++) {
             let sprite = this.sprites[i];
-            sprite.prepareShader(this.mSimpleColorShader, this.mCamera.View);
-            sprite.draw();
+            //sprite.prepareShader();
+            sprite.draw(this.mSimpleColorShader, this.mCamera.View);
         }
         this.mSimpleColorShader.endDraw();
 
@@ -69,8 +69,8 @@ export class DemoGame extends BaseGame {
 
             this.mSimpleTextureShader.beginDraw(this.mCamera.Projection);
 
-            this.mTexturedSprite.prepareShader(this.mSimpleTextureShader, this.mCamera.View);
-            this.mTexturedSprite.draw();
+            //this.mTexturedSprite.prepareShader();
+            this.mTexturedSprite.draw(this.mSimpleTextureShader, this.mCamera.View);
             this.mSimpleTextureShader.endDraw();
 
         }

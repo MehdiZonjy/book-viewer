@@ -31,10 +31,10 @@ export class Camera extends MovableObject{
     public getScale() {
         return [this.mView[SCALE_X], this.mView[SCALE_Y]];
     }*/
-    public get View() {
+    public get View():GLM.IArray {
         return this.Transformations;// mat3.clone(this.mView);
     }
-    public get Projection() {
+    public get Projection():GLM.IArray {
         return mat3.clone(this.mProjection);
     }
 

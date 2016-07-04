@@ -1,8 +1,11 @@
 import {IDisposable} from '../core';
-
-export  class ReadOnlyVBO implements IDisposable {
+import {VBO} from './interfaces';
+export  class ReadOnlyVBO implements IDisposable,VBO {
 
     protected mVBO:WebGLBuffer;
+    public get VBO(){
+        return this.mVBO;
+    }
     constructor(protected gl:WebGLRenderingContext,protected glBufferType,bufferData,bufferDataType){
         this.mVBO=gl.createBuffer();
         this.attach();
