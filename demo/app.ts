@@ -1,5 +1,5 @@
-import {BaseGame,Texture}from '../engine/core/';
-import {ColoredSprite,TexturedSprite} from '../engine/sprites/';
+import {BaseGame, Texture}from '../engine/core/';
+import {ColoredSprite, TexturedSprite} from '../engine/sprites/';
 import {FPSCounter} from '../engine/misc/';
 //var glmatrix = require('gl-matrix');
 //import {vec3} from 'glmatrix';
@@ -41,22 +41,18 @@ export class DemoGame extends BaseGame {
         }
         this.fpsCounter = new FPSCounter();
     }
-    public update(deltaTime) {
-
-        /* let world = mat3.create();
-         mat3.translate(world, world, vec2.fromValues(0, 0));
-         mat3.scale(world, world, vec2.fromValues(30, 30));
-         mat3.multiply(world,this.mCamera.View, world);
-         //console.log(`viewWorld ${world}`);
-         let final  = mat3.multiply(world,this.mCamera.Projection,world);*/
-        //  console.log(`final ${final}`)
+    protected update(deltaTime) {
 
         this.fpsCounter.update(deltaTime);
+
+    }
+
+    protected draw(deltaTime) {
         this.clearColor(1, 0, 0);
         //this.mSimpleColorShader.use();
         //this.mSimpleColorShader.setProjection(this.mCamera.Projection);
 
-        this.mSimpleColorShader.beginShader(this.mCamera.Projection);
+        this.mSimpleColorShader.beginDraw(this.mCamera.Projection);
         /*        this.quad.prepareShader(this.mSimpleShader, this.mCamera.View);
                 this.quad.draw();
         */
@@ -65,34 +61,24 @@ export class DemoGame extends BaseGame {
             sprite.prepareShader(this.mSimpleColorShader, this.mCamera.View);
             sprite.draw();
         }
-        this.mSimpleColorShader.endShader();
+        this.mSimpleColorShader.endDraw();
 
         if (this.mTexturedSprite) {
             //this.mSimpleTextureShader.use();
             //this.mSimpleTextureShader.setProjection(this.mCamera.Projection);
 
-            this.mSimpleTextureShader.beginShader(this.mCamera.Projection);
+            this.mSimpleTextureShader.beginDraw(this.mCamera.Projection);
 
             this.mTexturedSprite.prepareShader(this.mSimpleTextureShader, this.mCamera.View);
             this.mTexturedSprite.draw();
-            this.mSimpleTextureShader.endShader();
+            this.mSimpleTextureShader.endDraw();
 
         }
 
         this.fpsCounter.draw();
-        /*  public test(x,y,tx=0,ty=0,sx=1,sy=1){
-                let world = mat3.create();
-              mat3.translate(world, world, vec2.fromValues(tx, ty));
-              mat3.scale(world, world, vec2.fromValues(sx, sy));
-              mat3.multiply(world,this.mCamera.View, world);
-              let clippingMatrix  = mat3.multiply(world,this.mCamera.Projection,world);
-              console.log(`finalMatrix ${clippingMatrix}`);
-              let o = vec3.create();
-              vec2.transformMat3(o,vec2.fromValues(x,y),clippingMatrix);
-              console.log(`clip ${o}`);
-          }
-      */
+
     }
+
 }
 
 

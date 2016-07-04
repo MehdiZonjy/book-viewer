@@ -47,14 +47,14 @@ export class SimpleTextureShader extends BaseShader implements PositionTexcoordS
     protected readShaderAttributes() {
         this.mTexcoordLocation = this.gl.getAttribLocation(this.mShaderProgram, TEXTURE_COORDS);
     }
-    beginShader(projection) {
-        super.beginShader(projection);
+    beginDraw(projection) {
+        super.beginDraw(projection);
         this.gl.enableVertexAttribArray(this.mTexcoordLocation);
     }
 
-    endShader() {
+    endDraw() {
         this.gl.disableVertexAttribArray(this.mTexcoordLocation);
-        super.endShader();
+        super.endDraw();
     }
 
 

@@ -39,7 +39,7 @@ export abstract class BaseGame {
 
         */
         this.update(deltaTime);
-
+        this.draw(deltaTime);
 
     }
 
@@ -48,7 +48,8 @@ export abstract class BaseGame {
         this.mGl.clear(this.mGl.COLOR_BUFFER_BIT);
     }
 
-    abstract update(deltaTime);
+    protected abstract update(deltaTime);
+    protected abstract draw(deltaTime);
 
 }
 

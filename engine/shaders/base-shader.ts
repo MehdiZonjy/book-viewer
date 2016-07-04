@@ -63,13 +63,13 @@ export abstract class BaseShader implements IDisposable, IShader {
 
     }
 
-    beginShader(projection){
+    beginDraw(projection){
         this.use();
         this.setProjection(projection);
         this.gl.enableVertexAttribArray(this.mPositionLocation);
     }
 
-    endShader(){
+    endDraw(){
         this.gl.disableVertexAttribArray(this.mPositionLocation);
         this.unuse();
     }

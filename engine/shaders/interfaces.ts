@@ -4,8 +4,8 @@ export interface IShader{
 
     setProjection(projection);
     setViewWorld(viewWorld);
-    beginShader(projection);
-    endShader();
+    beginDraw(projection);
+    endDraw();
 
 
 }
