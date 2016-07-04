@@ -1,3 +1,6 @@
+/**
+ * Calculates the FPS of the game and displays it using a DIV
+ */
 export class FPSCounter{
     private mFPS:number;
     private mFrameCount;
@@ -16,6 +19,9 @@ export class FPSCounter{
         this.mFPSContainer.style.left="0px";
         document.getElementsByTagName('body')[0].appendChild(this.mFPSContainer);
     }
+    /**
+     * 
+     */
     update(deltaTime){
         this.mElapsedTime+=deltaTime;
         this.mFrameCount++;

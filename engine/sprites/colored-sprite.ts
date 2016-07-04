@@ -1,7 +1,7 @@
 import {IDisposable} from '../core';
 import {PositionVBO} from '../vertex-buffers';
 import {PositionColorShader} from '../shaders';
-import {BaseSprite} from './';
+import {BaseSprite} from './base-sprite';
 import {mat3,GLM} from 'gl-matrix';
 
 
@@ -23,13 +23,11 @@ var spritesCount = 0;
 
 export class ColoredSprite extends BaseSprite implements IDisposable {
     private mColor: number[];
-    private mViewWorld;
     constructor(private gl: WebGLRenderingContext) {
         super();
         initVBO(gl);
         spritesCount++;
         this.mColor = [1, 0, 0, 1];
-        this.mViewWorld = mat3.create();
     }
     setColor(r, g, b, a) {
         this.mColor[0] = r;
@@ -40,9 +38,7 @@ export class ColoredSprite extends BaseSprite implements IDisposable {
     }
 
     private prepareShader(shader: PositionColorShader, view:GLM.IArray) {
-
-        mat3.multiply(this.mViewWorld, view, this.Transformations);
-        shader.setViewWorld(this.mViewWorld);
+        this.loadViewWorldToShader(shader,view);
         shader.setColor(this.mColor[0], this.mColor[1], this.mColor[2], this.mColor[3]);
         vbo.loadToShader(shader);
     }

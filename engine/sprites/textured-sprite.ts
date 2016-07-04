@@ -25,19 +25,15 @@ function initVBO(gl: WebGLRenderingContext) {
 var spritesCount = 0;
 
 export class TexturedSprite extends BaseSprite implements IDisposable {
-    private mViewWorld:GLM.IArray;
     constructor(private mGl: WebGLRenderingContext, private mTexture: Texture) {
         super();
         initVBO(mGl);
         spritesCount++;
-        this.mViewWorld = mat3.create();
     }
 
 
     private  prepareShader(shader: PositionTexcoordShader, view:GLM.IArray) {
-
-        mat3.multiply(this.mViewWorld, view, this.Transformations);
-        shader.setViewWorld(this.mViewWorld);
+        this.loadViewWorldToShader(shader,view);
         vbo.loadToShader(shader);
         this.mTexture.loadToShader();
     }
