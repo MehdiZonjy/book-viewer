@@ -1,5 +1,8 @@
 /**
+ * 
  * Calculates the FPS of the game and displays it using a DIV
+ * @export
+ * @class FPSCounter
  */
 export class FPSCounter{
     private mFPS:number;

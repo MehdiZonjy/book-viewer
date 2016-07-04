@@ -5,7 +5,7 @@ declare module 'gl-matrix' {
 
 
     export namespace GLM {
-        interface IArray {
+        interface IArray extends Float32Array {
             /**
              * Must be indexable like an array
              */

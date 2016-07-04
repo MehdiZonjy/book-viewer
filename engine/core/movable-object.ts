@@ -58,10 +58,10 @@ export abstract class MovableObject {
         mat3.identity(this.mTransformation);
     }
     public postTranslation(deltaX, deltaY) {
-        mat3.translate(this.mTransformation, this.mTransformation, [deltaX, deltaY]);
+        mat3.translate(this.mTransformation, this.mTransformation, vec2.fromValues(deltaX, deltaY));
     }
     public postScale(scaleX, scaleY) {
-        mat3.scale(this.mTransformation, this.mTransformation, [scaleX, scaleY]);
+        mat3.scale(this.mTransformation, this.mTransformation, vec2.fromValues(scaleX, scaleY));
     }
     public postUniformScale(scale) {
         this.postScale(scale, scale);
