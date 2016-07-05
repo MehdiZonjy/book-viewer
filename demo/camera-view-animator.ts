@@ -13,7 +13,7 @@ export class CameraViewAnimator {
         return 8;
     }
     static get MIN_ZOOM() {
-        return 0.2;
+        return 1;
     }
 
     constructor(private mCanvas: HTMLCanvasElement, private mCamera: Camera) {
@@ -70,9 +70,9 @@ export class CameraViewAnimator {
                         let targetScale = currentScale * scale;
                         let deltaScale = Math.abs(targetScale - currentScale);
                         console.log(`delta scale ${deltaScale}`);
-                        if (deltaScale > 0.1 || this.mZoomAnimator.isActive)
-                            this.mZoomAnimator.setup(currentScale, targetScale, ev.center.x, ev.center.y, 50);
-                        else
+                      //  if (deltaScale > 0.1 || this.mZoomAnimator.isActive)
+                      //      this.mZoomAnimator.setup(currentScale, targetScale, ev.center.x, ev.center.y, 50);
+                       // else
                             this.zoom(targetScale, ev.center.x, ev.center.y);
 
                     }
