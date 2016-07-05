@@ -24,7 +24,7 @@ export  class DecayAnimator {
             return;
         //convert deltatime from milliseconds to a decimal second ;
         deltaTime = deltaTime / 1000;
-        console.log(`time ${deltaTime}`);
+   //     console.log(`time ${deltaTime}`);
         //calculate change in velocity
         let dx = this.velocityX * deltaTime;
         let dy = this.velocityY * deltaTime;
@@ -39,7 +39,7 @@ export  class DecayAnimator {
             this.isActive = false;
             return;
         }
-        console.log(`dx ${dx} dy ${dy}`);
+      //  console.log(`dx ${dx} dy ${dy}`);
 
         this.onUpdateCallback(dx, dy);
     }

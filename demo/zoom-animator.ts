@@ -1,4 +1,4 @@
-import {CubicEasing} from './cubic-easing';
+import {CubicEasing} from '../engine/math';
 export class ZoomAnimator {
 
     startTime: number;
@@ -16,11 +16,11 @@ export class ZoomAnimator {
         this.easing = new CubicEasing();
     }
 
-    update() {
+    update(deltaTime) {
         if (!this.isActive)
             return;
         let now = Date.now();
-        let deltaTime = Math.min(this.duration, now - this.startTime);
+        deltaTime = Math.min(this.duration, now - this.startTime);
         let newScale = this.easing.easeOut(deltaTime, 0, this.deltaScale, this.duration);
         this.onZoomCallback(this.scaleFrom + newScale, this.centerX, this.centerY);
         //                zoomTo(oldScale + newScale, destX, destY);

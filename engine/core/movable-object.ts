@@ -1,17 +1,19 @@
-import  {MatrixHelper} from '../math';
-import {mat3,vec2,GLM} from 'gl-matrix';
+import {MatrixHelper} from '../math';
+import {mat3, vec2, vec3, GLM} from 'gl-matrix';
 
 export abstract class MovableObject {
 
-    private mIsTransformationDirty:boolean;
-    private mCachedInverse:GLM.IArray;
+    private mIsTransformationDirty: boolean;
+    private mCachedInverse: GLM.IArray;
     //   private mPosition;
     //   private mScale;
-    private mTransformation:GLM.IArray;
+    private mTransformation: GLM.IArray;
 
 
     constructor() {
         this.mTransformation = mat3.create();
+        this.mCachedInverse=mat3.create();
+        this.mIsTransformationDirty=true;
     }
 
     public get Transformations() {
@@ -43,7 +45,7 @@ export abstract class MovableObject {
     public get ScaleY() {
         return this.mTransformation[MatrixHelper.SCALE_Y];
     }
-    public get InverseTransform():GLM.IArray {
+    public get InverseTransform(): GLM.IArray {
         if (this.mIsTransformationDirty)
             mat3.invert(this.mCachedInverse, this.mTransformation);
         return this.mCachedInverse;
@@ -76,6 +78,16 @@ export abstract class MovableObject {
 
     }
 
+    public transformPoint(x, y) {
+        let point = vec2.fromValues(x, y);
+        vec2.transformMat3(point, point, this.Transformations);
+        return point;
+    }
+    public transformPointInverse(x,y){
+        let point = vec2.fromValues(x,y);
+        vec2.transformMat3(point,point,this.InverseTransform);
+        return point;
+    }
 
 
 
