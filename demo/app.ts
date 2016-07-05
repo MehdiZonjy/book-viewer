@@ -1,16 +1,20 @@
 import {BaseGame, Texture}from '../engine/core/';
 import {ColoredSprite, TexturedSprite} from '../engine/sprites/';
 import {FPSCounter} from '../engine/misc/';
+import {DecayAnimator} from './decay-animator';
+import {CameraViewAnimator} from './camera-view-animator';
 //var glmatrix = require('gl-matrix');
 //import {vec3} from 'glmatrix';
 export class DemoGame extends BaseGame {
     //private quad: ColoredSprite;
     private sprites: ColoredSprite[];
     private fpsCounter: FPSCounter;
-
     private mTexture: Texture;
     private mTexturedSprite: TexturedSprite;
+    private mCameraViewAnimator: CameraViewAnimator;
     //  private mTextureShader: SimpleTextureShader;
+
+    private mHammer;
 
     constructor() {
         super({});
@@ -39,9 +43,13 @@ export class DemoGame extends BaseGame {
             sprite.setColor(Math.random(), Math.random(), Math.random(), 1);
             this.sprites.push(sprite);
         }
+        this.mCameraViewAnimator = new CameraViewAnimator(this.mCanvas, this.mCamera);
         this.fpsCounter = new FPSCounter();
     }
+
+
     protected update(deltaTime) {
+        this.mCameraViewAnimator.update(deltaTime);
 
         this.fpsCounter.update(deltaTime);
 
@@ -78,6 +86,7 @@ export class DemoGame extends BaseGame {
         this.fpsCounter.draw();
 
     }
+
 
 }
 
