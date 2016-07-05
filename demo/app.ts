@@ -7,28 +7,36 @@ import {CameraViewAnimator} from './camera-view-animator';
 //import {vec3} from 'glmatrix';
 export class DemoGame extends BaseGame {
     //private quad: ColoredSprite;
-    private sprites: ColoredSprite[];
+    private mColorSprites: ColoredSprite[];
     private fpsCounter: FPSCounter;
     private mTexture: Texture;
-    private mTexturedSprite: TexturedSprite;
+    private mTexturedSprites: TexturedSprite[];
     private mCameraViewAnimator: CameraViewAnimator;
     //  private mTextureShader: SimpleTextureShader;
 
     private mHammer;
 
     constructor() {
+
         super({});
-        this.sprites = [];
+        this.mColorSprites = [];
 
         //  this.mTextureShader = new SimpleTextureShader(this.mGl);
 
         let img = new Image();
         img.onload = () => {
             this.mTexture = new Texture(this.mGl, img);
-            this.mTexturedSprite = new TexturedSprite(this.mGl, this.mTexture);
-            this.mTexturedSprite.postTranslation(10, 10);
-            this.mTexturedSprite.setHeight(300 + 1);
-            this.mTexturedSprite.setWidth(300 + 1);
+            let textureAR = this.mTexture.Width / this.mTexture.Height;
+            let pageWidth = this.mCanvas.width;
+            let pageHeight = pageWidth / textureAR;
+            this.mTexturedSprites=[];
+            for (let i = 0; i < 20; i++) {
+                let sprite = new TexturedSprite(this.mGl, this.mTexture);
+                sprite.postTranslation(0, i* pageHeight);
+                sprite.setHeight(pageHeight);
+                sprite.setWidth(pageWidth);
+                this.mTexturedSprites.push(sprite);
+            }
         };
         img.src = 'media/doge.jpeg';
 
@@ -41,7 +49,7 @@ export class DemoGame extends BaseGame {
             sprite.setHeight(Math.random() * 30 + 30);
             sprite.setWidth(Math.random() * 30 + 30);
             sprite.setColor(Math.random(), Math.random(), Math.random(), 1);
-            this.sprites.push(sprite);
+            this.mColorSprites.push(sprite);
         }
         this.mCameraViewAnimator = new CameraViewAnimator(this.mCanvas, this.mCamera);
         this.fpsCounter = new FPSCounter();
@@ -64,21 +72,22 @@ export class DemoGame extends BaseGame {
         /*        this.quad.prepareShader(this.mSimpleShader, this.mCamera.View);
                 this.quad.draw();
         */
-        for (let i = 0, l = this.sprites.length; i < l; i++) {
-            let sprite = this.sprites[i];
+        for (let i = 0, l = this.mColorSprites.length; i < l; i++) {
+            let sprite = this.mColorSprites[i];
             //sprite.prepareShader();
             sprite.draw(this.mSimpleColorShader, this.mCamera.View);
         }
         this.mSimpleColorShader.endDraw();
 
-        if (this.mTexturedSprite) {
+        if (this.mTexturedSprites) {
             //this.mSimpleTextureShader.use();
             //this.mSimpleTextureShader.setProjection(this.mCamera.Projection);
 
             this.mSimpleTextureShader.beginDraw(this.mCamera.Projection);
 
             //this.mTexturedSprite.prepareShader();
-            this.mTexturedSprite.draw(this.mSimpleTextureShader, this.mCamera.View);
+            for (let i = 0; i < this.mTexturedSprites.length; i++)
+                this.mTexturedSprites[i].draw(this.mSimpleTextureShader, this.mCamera.View);
             this.mSimpleTextureShader.endDraw();
 
         }
