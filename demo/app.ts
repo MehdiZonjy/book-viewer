@@ -4,7 +4,7 @@ import {FPSCounter} from '../engine/misc/';
 import {DecayAnimator} from './decay-animator';
 import {CameraViewAnimator} from './camera-view-animator';
 
-import {TextAssetLoader, FileType, IMAGE_LOADER_TYPE} from '../engine/assets';
+import { FileType, IMAGE_LOADER_TYPE,TEXT_LOADER_TYPE} from '../engine/assets';
 //var glmatrix = require('gl-matrix');
 //import {vec3} from 'glmatrix';
 export class DemoGame extends BaseGame {
@@ -31,11 +31,20 @@ export class DemoGame extends BaseGame {
                 };
                 img.src = 'media/doge.jpeg';
         */
-        this.mAssetsManager.loadAsset('./package.json', TextAssetLoader.LOADER_TYPE, [FileType.json], (text) => {
+        this.mAssetsManager.addAssetToGroup('text','./package.json',TEXT_LOADER_TYPE,[FileType.json]);
+        this.mAssetsManager.addAssetToGroup('text','./notes.txt',TEXT_LOADER_TYPE,[FileType.text]);
+        this.mAssetsManager.addAssetToGroup('text','./index.html',TEXT_LOADER_TYPE,[FileType.xml]);
+
+        this.mAssetsManager.startGroupRequest('text',()=>{
+            console.log(this.mAssetsManager.getAsset('./package.json'));
+            console.log(this.mAssetsManager.getAsset('./notes.txt'));
+            console.log(this.mAssetsManager.getAsset('./index.html'));
+        });
+/*        this.mAssetsManager.loadAsset('./package.json', TEXT_LOADER_TYPE, [FileType.json], (text) => {
             console.log(text);
             console.log(this.mAssetsManager.assetsCount());
         });
-        this.mAssetsManager.loadAsset('./media/doge.jpeg', IMAGE_LOADER_TYPE, []    , (img: HTMLImageElement) => {
+  */      this.mAssetsManager.loadAsset('./media/doge.jpeg', IMAGE_LOADER_TYPE, []    , (img: HTMLImageElement) => {
 
             this.mTexture = new Texture(this.mGl, img);
             let textureAR = this.mTexture.Width / this.mTexture.Height;
