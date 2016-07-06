@@ -39,8 +39,22 @@ export class Camera extends MovableObject {
     }
 
     public getViewBounds() {
-        //this.mCanvas.width;
-        return [this.transformPointInverse(0, 0), this.transformPointInverse(this.mCanvas.width, 0), this.transformPointInverse(this.mCanvas.width, this.mCanvas.height), this.transformPointInverse(0, this.mCanvas.height)];
+        //TODO add some kind of cache for viewBounds
+        return [this.transformPointInverse(0, 0), this.transformPointInverse(this.mCanvas.width, this.mCanvas.height)];
+    }
+
+    /**
+     * checks if a point is inside ViewBounds
+     * 
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
+    public isPointVisble(x:number, y:number):boolean {
+        let viewBounds = this.getViewBounds();
+        return x >= viewBounds[0][0] && x <= viewBounds[1][0] && y >= viewBounds[0][1] && y <= viewBounds[1][1];
+
+
     }
 
 
