@@ -39,13 +39,15 @@ export class DemoGame extends BaseGame {
             console.log(this.mAssetsManager.getAsset('./package.json'));
             console.log(this.mAssetsManager.getAsset('./notes.txt'));
             console.log(this.mAssetsManager.getAsset('./index.html'));
+            console.log(this.mAssetsManager.activeRequestsCount());
         });
+        console.log('start group text');
 /*        this.mAssetsManager.loadAsset('./package.json', TEXT_LOADER_TYPE, [FileType.json], (text) => {
             console.log(text);
             console.log(this.mAssetsManager.assetsCount());
         });
   */      this.mAssetsManager.loadAsset('./media/doge.jpeg', IMAGE_LOADER_TYPE, []    , (img: HTMLImageElement) => {
-
+console.log('get doge');
             this.mTexture = new Texture(this.mGl, img);
             let textureAR = this.mTexture.Width / this.mTexture.Height;
             let pageWidth = this.mCanvas.width;
@@ -59,6 +61,7 @@ export class DemoGame extends BaseGame {
                 this.mTexturedSprites.push(sprite);
             }
         });
+        console.log('after call doge');
 
         for (let i = 0; i < 20; i++) {
             let sprite = new ColoredSprite(this.mGl);
