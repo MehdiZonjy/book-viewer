@@ -1,21 +1,28 @@
-import {SimpleColorShader,SimpleTextureShader} from '../shaders';
+import {SimpleColorShader, SimpleTextureShader} from '../shaders';
 import {Camera} from './';
+import {AssetsManager, TextAssetLoader,ImageAssetLoader,IMAGE_LOADER_TYPE,TEXT_LOADER_TYPE} from '../assets';
 /// <reference path="../gl-matrix.d.ts" />
 
 
 export abstract class BaseGame {
     protected mGl: WebGLRenderingContext;
     protected mCanvas: HTMLCanvasElement;
-    protected mSimpleColorShader:SimpleColorShader;
+    protected mSimpleColorShader: SimpleColorShader;
     protected mSimpleTextureShader: SimpleTextureShader;
-    protected mCamera:Camera;
+    protected mCamera: Camera;
+    protected mAssetsManager: AssetsManager;
+
+
     private mLastFrameUpdate;
     constructor(options) {
         this.mCanvas = createCanvas();
         this.mGl = createWebGLContext(this.mCanvas);
         this.mSimpleColorShader = new SimpleColorShader(this.mGl);
-        this.mSimpleTextureShader=new SimpleTextureShader(this.mGl);
-        this.mCamera=new Camera(this.mCanvas);
+        this.mSimpleTextureShader = new SimpleTextureShader(this.mGl);
+        this.mCamera = new Camera(this.mCanvas);
+        this.mAssetsManager = new AssetsManager();
+        this.mAssetsManager.registerLoader(new TextAssetLoader(), TEXT_LOADER_TYPE);
+        this.mAssetsManager.registerLoader(new ImageAssetLoader(),IMAGE_LOADER_TYPE);
         requestAnimationFrame(this.mainLoop);
     }
 
@@ -30,7 +37,7 @@ export abstract class BaseGame {
         let deltaTime = now - this.mLastFrameUpdate;
         this.mLastFrameUpdate = now;
 
-        this.mGl.viewport(0,0,this.mCanvas.width,this.mCanvas.height);
+        this.mGl.viewport(0, 0, this.mCanvas.width, this.mCanvas.height);
 
         //TODO add frame skipping and split update into onUpdate and onDraw
         /*(while deltaTime > 1000/60)
@@ -43,7 +50,7 @@ export abstract class BaseGame {
 
     }
 
-    protected clearColor(r, g, b, a=1) {
+    protected clearColor(r, g, b, a = 1) {
         this.mGl.clearColor(r, g, b, a);
         this.mGl.clear(this.mGl.COLOR_BUFFER_BIT);
     }

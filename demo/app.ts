@@ -3,6 +3,8 @@ import {ColoredSprite, TexturedSprite} from '../engine/sprites/';
 import {FPSCounter} from '../engine/misc/';
 import {DecayAnimator} from './decay-animator';
 import {CameraViewAnimator} from './camera-view-animator';
+
+import {TextAssetLoader, FileType, IMAGE_LOADER_TYPE} from '../engine/assets';
 //var glmatrix = require('gl-matrix');
 //import {vec3} from 'glmatrix';
 export class DemoGame extends BaseGame {
@@ -21,26 +23,33 @@ export class DemoGame extends BaseGame {
         super({});
         this.mColorSprites = [];
 
-        //  this.mTextureShader = new SimpleTextureShader(this.mGl);
 
-        let img = new Image();
-        img.onload = () => {
+        //  this.mTextureShader = new SimpleTextureShader(this.mGl);
+        /*
+                let img = new Image();
+                img.onload = () => {
+                };
+                img.src = 'media/doge.jpeg';
+        */
+        this.mAssetsManager.loadAsset('./package.json', TextAssetLoader.LOADER_TYPE, [FileType.json], (text) => {
+            console.log(text);
+            console.log(this.mAssetsManager.assetsCount());
+        });
+        this.mAssetsManager.loadAsset('./media/doge.jpeg', IMAGE_LOADER_TYPE, []    , (img: HTMLImageElement) => {
+
             this.mTexture = new Texture(this.mGl, img);
             let textureAR = this.mTexture.Width / this.mTexture.Height;
             let pageWidth = this.mCanvas.width;
             let pageHeight = pageWidth / textureAR;
-            this.mTexturedSprites=[];
+            this.mTexturedSprites = [];
             for (let i = 0; i < 20; i++) {
                 let sprite = new TexturedSprite(this.mGl, this.mTexture);
-                sprite.postTranslation(0, i* pageHeight);
+                sprite.postTranslation(0, i * pageHeight);
                 sprite.setHeight(pageHeight);
                 sprite.setWidth(pageWidth);
                 this.mTexturedSprites.push(sprite);
             }
-        };
-        img.src = 'media/doge.jpeg';
-
-
+        });
 
         for (let i = 0; i < 20; i++) {
             let sprite = new ColoredSprite(this.mGl);
