@@ -149,9 +149,9 @@ export class AssetsManager {
         let group = this.mGroupsActiveRequests.get(groupName);
         //if there are no more active requests in this group then execute groupLoadedCallback and remove the group
         if (group.ActiveRequests.size == 0) {
+            this.mGroupsActiveRequests.delete(groupName);
             group.onGroupLoaded();
             group.onGroupLoaded = null;
-            this.mGroupsActiveRequests.delete(groupName);
         }
     }
 
