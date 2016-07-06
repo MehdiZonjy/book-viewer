@@ -5,7 +5,7 @@ export  class DecayAnimator {
     }
     //used to decrease velocity over time
     static get DECAY_FACTOR() {
-        return 0.85;
+        return 0.90;
     }
     
 
