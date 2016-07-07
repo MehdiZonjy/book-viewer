@@ -1,5 +1,8 @@
 {
   "globalDependencies": {
     "hammerjs": "registry:dt/hammerjs#2.0.4+20160622233604"
+  },
+  "dependencies": {
+    "pad-left": "registry:npm/pad-left#2.0.0+20160211003958"
   }
 }
