@@ -3,10 +3,13 @@ export class Texture implements IDisposable {
   private mTextureHandler: WebGLTexture;
   private mWidth: number;
   private mHeight: number;
-
+  private mName:string;
+  private mDisposed:boolean;
   constructor(private mGl: WebGLRenderingContext, private mImage: HTMLImageElement) {
     this.mWidth = this.mImage.naturalWidth;
     this.mHeight = this.mImage.naturalHeight;
+    this.mName = mImage.src;
+    this.mDisposed=false;
     this.initTexture();
   }
 
@@ -31,6 +34,9 @@ export class Texture implements IDisposable {
   public get getTextureHandler() {
     return this.mTextureHandler;
   }
+  public get ImageName(){
+    return this.mName;
+  }
 
   public get Width() {
     return this.mWidth;
@@ -40,6 +46,8 @@ export class Texture implements IDisposable {
   }
 
   public dispose() {
+    this.mDisposed=true;
+    this.mGl.bindTexture(this.mGl.TEXTURE_2D,null);
     this.mGl.deleteTexture(this.mTextureHandler);
   }
 
