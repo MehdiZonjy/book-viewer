@@ -38,7 +38,7 @@ export class Camera extends MovableObject {
         return mat3.clone(this.mProjection);
     }
 
-    public getViewBounds() {
+    public getVisisbleViewBounds() {
         //TODO add some kind of cache for viewBounds
         return [this.transformPointInverse(0, 0), this.transformPointInverse(this.mCanvas.width, this.mCanvas.height)];
     }
@@ -51,7 +51,7 @@ export class Camera extends MovableObject {
      * @returns {boolean}
      */
     public isPointVisble(x:number, y:number):boolean {
-        let viewBounds = this.getViewBounds();
+        let viewBounds = this.getVisisbleViewBounds();
         return x >= viewBounds[0][0] && x <= viewBounds[1][0] && y >= viewBounds[0][1] && y <= viewBounds[1][1];
 
 
