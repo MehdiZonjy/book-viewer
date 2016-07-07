@@ -17,7 +17,7 @@ export class CameraViewLimiter {
 
 
     update() {
-        let viewBounds = this.mCamera.getViewBounds();
+        let viewBounds = this.mCamera.getVisisbleViewBounds();
         let shiftX = 0, shiftY = 0;
         if (viewBounds[0][0] < this.mMinX) 
             shiftX = viewBounds[0][0] - this.mMinX;
