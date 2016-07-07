@@ -25,10 +25,12 @@ function initVBO(gl: WebGLRenderingContext) {
 var spritesCount = 0;
 
 export class TexturedSprite extends BaseSprite implements IDisposable {
-    constructor(private mGl: WebGLRenderingContext, private mTexture: Texture) {
+    protected mDisposed:boolean;
+    constructor(protected mGl: WebGLRenderingContext, protected mTexture: Texture) {
         super();
         initVBO(mGl);
         spritesCount++;
+        this.mDisposed=false;
     }
 
 
@@ -45,14 +47,18 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
 
 
     dispose() {
-        this.mTexture.dispose();
+        this.mDisposed=true;
+        if(this.mTexture)
+            this.mTexture.dispose();
         //decreases instances count
         spritesCount--;
         //if there are no more instances using the VBO then delete it.
+        //TODO probably this won't be necessery
+        /*
         if (spritesCount == 0) {
             vbo.dispose();// this.mGl.deleteBuffer(vbo);
             vbo = null;
-        }
+        }*/
     }
 
 }
