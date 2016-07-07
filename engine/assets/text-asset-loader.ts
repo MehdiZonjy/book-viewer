@@ -40,6 +40,9 @@ export class TextAssetLoader implements ILoader {
             req.send();
         });
     }
+    unload(asset){
+        return true;
+    }
 }
 
 

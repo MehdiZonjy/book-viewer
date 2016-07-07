@@ -1,5 +1,7 @@
 export class AssetEntry{
     public Asset:any;
+    public IsCanceled:boolean;
+    public LoaderExtra:any;
     constructor(public Name: string, public OnAssetLoadedCallback: (asset: AssetEntry) => void, public Loader: Symbol,public LoaderArgs:any[],public Group:string) {
     }
 

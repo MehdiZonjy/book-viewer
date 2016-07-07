@@ -48,7 +48,12 @@ export class AssetsManager {
     }
 
     public removeAsset(name: string) {
-        this.mAssetsStorage.has(name) && this.mAssetsStorage.delete(name);
+
+        if (this.mAssetsStorage.has(name)) {
+            let assetEntry = this.mAssetsStorage.get(name);
+            this.mRegisteredLoaders.get(assetEntry.Loader).unload(assetEntry.Asset);
+            this.mAssetsStorage.delete(name);
+        }
     }
     public registerLoader(loader: ILoader, loaderSymbol: Symbol) {
         this.mRegisteredLoaders.set(loaderSymbol, loader);
@@ -56,12 +61,24 @@ export class AssetsManager {
     public unregisterLoader(loaderSymbol: Symbol) {
         this.mRegisteredLoaders.delete(loaderSymbol);
     }
-    public assetsCount():number{
+    public assetsCount(): number {
         return this.mAssetsStorage.size;
+    }
+    public cancelAssetLoadRequest(assetName: string) {
+        if (this.mActiveRequests.has(assetName)) {
+            console.log(`cancel active request ${assetName}`);
+            let assetEntry = this.mActiveRequests.get(assetName);
+            assetEntry.IsCanceled = true
+            this.mRegisteredLoaders.get(assetEntry.Loader).unload(assetEntry);
+            this.mActiveRequests.delete(assetName);
+
+        }
+
+        //TODO add implementation
     }
 
 
-    public loadAsset(assetName: string, loaderType: symbol,loaderArgs:any[], onAssetLoaded?: (asset) => void) {
+    public loadAsset(assetName: string, loaderType: symbol, loaderArgs: any[], onAssetLoaded?: (asset) => void) {
         //check if asset is already loaded
         if (this.mAssetsStorage.has(assetName)) {
             onAssetLoaded && onAssetLoaded(this.mAssetsStorage.get(assetName));
@@ -73,11 +90,12 @@ export class AssetsManager {
         if (this.loadAssetRequestExsits(assetName))
             return;
 
-        let asset = new AssetEntry(assetName, onAssetLoaded, loaderType,loaderArgs,null);
+        let asset = new AssetEntry(assetName, onAssetLoaded, loaderType, loaderArgs, null);
+        this.mActiveRequests.set(assetName, asset);
         this.processLoadAssetRequest(asset);
     }
 
-    public addAssetToGroup(groupName: string, assetName: string, loaderType: symbol,loaderArgs:any[]) {
+    public addAssetToGroup(groupName: string, assetName: string, loaderType: symbol, loaderArgs: any[]) {
         if (this.mAssetsStorage.has(assetName) || this.loadAssetRequestExsits(assetName))
             return;
 
@@ -88,7 +106,7 @@ export class AssetsManager {
         }
 
         let group = this.mPendingGroupsRequests.get(groupName);
-        group.ActiveRequests.set(assetName, new AssetEntry(assetName, null, loaderType,loaderArgs, groupName));
+        group.ActiveRequests.set(assetName, new AssetEntry(assetName, null, loaderType, loaderArgs, groupName));
     }
 
     public startGroupRequest(groupName: string, onGroupLoaded: () => void) {
@@ -99,13 +117,13 @@ export class AssetsManager {
         //retrieve group from pending map and remove it.
         let group = this.mPendingGroupsRequests.get(groupName);
         this.mPendingGroupsRequests.delete(groupName);
-        
-        
-        group.onGroupLoaded=onGroupLoaded;
-        this.mGroupsActiveRequests.set(groupName,group);
-        for(let asset of group.ActiveRequests.values()){
+
+
+        group.onGroupLoaded = onGroupLoaded;
+        this.mGroupsActiveRequests.set(groupName, group);
+        for (let asset of group.ActiveRequests.values()) {
             this.processLoadAssetRequest(asset);
-        }        
+        }
 
     }
 
@@ -117,12 +135,21 @@ export class AssetsManager {
             return;
         }
         let loader = this.mRegisteredLoaders.get(assetEntry.Loader);
-        loader.load(assetEntry,...assetEntry.LoaderArgs).then(this.onAssetLoaded, this.onLoadAssetFaild);
+        loader.load(assetEntry, ...assetEntry.LoaderArgs).then(this.onAssetLoaded, this.onLoadAssetFaild);
 
     }
     private onAssetLoaded = (assetEntry: AssetEntry) => {
+
+
+        if (assetEntry.IsCanceled) {
+            console.log(`asset ${assetEntry.Name}  completed but has been canceled`);
+            this.mRegisteredLoaders.get(assetEntry.Loader).unload(assetEntry);
+            return;
+
+        }
         // remove from active requests map and add entry to assetsStorage
         this.mActiveRequests.delete(assetEntry.Name);
+
         this.mAssetsStorage.set(assetEntry.Name, assetEntry);
         assetEntry.OnAssetLoadedCallback && assetEntry.OnAssetLoadedCallback(assetEntry.Asset);
 
@@ -138,6 +165,14 @@ export class AssetsManager {
     }
     private onLoadAssetFaild = (assetEntry: AssetEntry) => {
         this.mActiveRequests.delete(assetEntry.Name);
+
+        if (assetEntry.IsCanceled) {
+            console.log(`asset ${assetEntry.Name}  error loading but has been canceled`);
+            this.mRegisteredLoaders.get(assetEntry.Loader).unload(assetEntry);
+            return;
+
+        }
+
         assetEntry.OnAssetLoadedCallback = null;
         if (assetEntry.Group) {
             this.mGroupsActiveRequests.get(assetEntry.Group).ActiveRequests.delete(assetEntry.Name);
