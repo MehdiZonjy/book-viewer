@@ -152,7 +152,7 @@ export abstract class BaseShader implements IDisposable, IShader {
 
     /**
      * 
-     * set load Projection Matrix into shader
+     * set load Projection Matrix in shader
      * @param {Float32Array} projection
      */
     setProjection(projection:Float32Array) {
@@ -170,7 +170,7 @@ export abstract class BaseShader implements IDisposable, IShader {
     }
 
     /**
-     * load the ShaderProgram into WebGL for using and enable shader attributes (if any)
+     * load the ShaderProgram into WebGL  and enable shader attributes (if any)
      * should be called when you are about to use this shader for drawing
      * @param {Float32Array} projection
      */
