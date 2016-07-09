@@ -1,53 +1,45 @@
 import {AssetEntry} from './asset-entry';
-import {ILoader} from './interfaces';
-
+//import {ILoader} from './interfaces';
+import {XMLHttpRequestLoader} from './xml-http-request-loader';
 
 
 
 export const IMAGE_LOADER_TYPE = Symbol('image-asset-loader');
 
-export class ImageAssetLoader implements ILoader {
-    load(assetEntry: AssetEntry) {
+/**
+ * loads images as HTMLImageElement asset
+ * since we can't abort an image request made by setting image.src = assetEntry.name 
+ * we will first load the image file via XMLHttpRequest, and once it's been loaded and added to browser cache
+ * we will use load the image using Image class and force the browser to use the cached version 
+ * @export
+ * @class ImageAssetLoader
+ * @implements {ILoader}
+ */
+export class ImageAssetLoader extends XMLHttpRequestLoader {
 
-        return new Promise((resolve, reject) => {
-            let req = new XMLHttpRequest();
-            req.open('GET', assetEntry.Name, true);
-            //   req.setRequestHeader('Content-Type', 'image/jpeg');
-            //TODO possible optimization(reuse the same function for all calls)
-            req.onload =  ()=> {
-                let iasd=req.response;
-                let image = new Image();
-                //TODO possible optimization(reuse the same function for all calls)
-                image.onload = () => {
-                    assetEntry.LoaderExtra = null;
-                    assetEntry.Asset = image;
-                    resolve(assetEntry);
-                };
-                image.onerror = () => {
-                    assetEntry.LoaderExtra = null;
-                    reject(assetEntry);
-                }
-                image.src = assetEntry.Name;
-            };
-          //  req.onabort=()=>reject(assetEntry);
-            req.onerror=()=>reject(assetEntry);
-            assetEntry.LoaderExtra=req;
-            req.onabort=()=>console.log('aborted');
-            req.send();
-
-
-
-
-
-        });
+    protected onRequestLoaded(assetEntry, arg, req: XMLHttpRequest, resolve, reject) {
+        //once image has been loaded via XMLHttpRequest and cahced by browser, let's reload it again using Image 
+        //and the browser will use the cached version it  previously created
+        let image = new Image();
+        image.onload = () => {
+            //remove any memeory leaks
+            assetEntry.LoaderExtra = null;
+            assetEntry.Asset = image;
+            resolve(assetEntry);
+        };
+        image.onerror = () => {
+            assetEntry.LoaderExtra = null;
+            reject(assetEntry);
+        }
+        image.src = assetEntry.Name;
     }
 
+
+
     unload(assetEntry: AssetEntry) {
+        super.unload(assetEntry);
+
         if (assetEntry.Asset)
             assetEntry.Asset.src = '';
-        if (assetEntry.LoaderExtra)
-            assetEntry.LoaderExtra.abort();
-
-        return true;
     }
 }
