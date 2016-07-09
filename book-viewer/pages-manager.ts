@@ -51,7 +51,7 @@ export class PagesManager {
         this.mPages = [];
         // this.mIsReady=true;
         // });
-        this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, [], (image) => {
+        this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, null, (image) => {
             this.mLoadingPageTexture = new Texture(this.mGl, image);
             this.mIsReady = true;
         });

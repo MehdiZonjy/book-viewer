@@ -9,7 +9,7 @@ export class Page extends TexturedSprite {
     constructor(private mPageId: number, private mAssetsManager: AssetsManager, private mPageImageUrl, gl: WebGLRenderingContext, mLoadingPageTexture: Texture) {
         super(gl, mLoadingPageTexture)
         this.mPageImageLoaded = false;
-        this.mAssetsManager.loadAsset(this.mPageImageUrl, IMAGE_LOADER_TYPE, [], (image: HTMLImageElement) => {
+        this.mAssetsManager.loadAsset(this.mPageImageUrl, IMAGE_LOADER_TYPE, null, (image: HTMLImageElement) => {
             if (this.mDisposed) {
                 //just to be safe remove image asset
                 //this.mAssetsManager.cancelAssetLoadRequest(this.mPageImageUrl)
