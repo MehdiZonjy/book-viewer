@@ -56,7 +56,7 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
      * @param {Texture} mTexture
      * @param {boolean} [mShaderTexture=true] if set false then {Texture.dispose} will be called when the sprite is dispoed
      */
-    constructor(protected mGl: WebGLRenderingContext, protected mTexture: Texture, protected mShaderTexture = true) {
+    constructor(protected mGl: WebGLRenderingContext, protected mTexture: Texture, protected mSharedTexture = true) {
         super();
         initVBO(mGl);
         spritesCount++;
@@ -92,7 +92,7 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
      */
     dispose() {
         this.mDisposed = true;
-        if (this.mTexture && !this.mShaderTexture)
+        if (this.mTexture && !this.mSharedTexture)
             this.mTexture.dispose();
         //decreases instances count
         spritesCount--;

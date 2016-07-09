@@ -1,52 +1,85 @@
+/**
+ * slowly decays a value over time and reports changes  to a callback
+ * it uses a supplied velocity to calculate speed and then speed is reported to callback
+ * Speed = Velocity * DeltaTime
+ * @export
+ * @class DecayAnimator
+ */
 export  class DecayAnimator {
-    //used to bring the animation to a halt
+    /**
+     * used to halt animation once speed<=THRESHOLD
+     * 
+     * @readonly
+     * @static
+     */
     static get THRESHOLD() {
         return 5;
     }
-    //used to decrease velocity over time
+    /**
+     * the value by which to decrease velocity over time
+     * 
+     * @readonly
+     * @static
+     */
     static get DECAY_FACTOR() {
         return 0.90;
     }
     
+    private mVelocityX:number;
+    private mVelocityY:number;
 
-    private velocityX;
-    private velocityY;
-    private isActive;
+    /**
+     * indicates if the animation is still active
+     * 
+     * @private
+     */
+    private mIsActive:boolean;
     //pass a callback which will be notified of changes in dX and dY
     constructor(private onUpdateCallback) {
-        this.velocityX = 0;
-        this.velocityY = 0;
+        this.mVelocityX = 0;
+        this.mVelocityY = 0;
         this.onUpdateCallback = onUpdateCallback;
-        this.isActive = false;
+        this.mIsActive = false;
     }
-    update(deltaTime) {
-        if (!this.isActive)
+    /**
+     * update velocity and report current speed
+     * 
+     * @param {number} deltaTime
+     * @returns
+     */
+    update(deltaTime:number) {
+        if (!this.mIsActive)
             return;
+
         //convert deltatime from milliseconds to a decimal second ;
         deltaTime = deltaTime / 1000;
-   //     console.log(`time ${deltaTime}`);
-        //calculate change in velocity
-        let dx = this.velocityX * deltaTime;
-        let dy = this.velocityY * deltaTime;
+
+        //calculate speed
+        let dx = this.mVelocityX * deltaTime;
+        let dy = this.mVelocityY * deltaTime;
 
         //decay velocity
-        this.velocityX *= DecayAnimator.DECAY_FACTOR;
-        this.velocityY *= DecayAnimator.DECAY_FACTOR;
+        this.mVelocityX *= DecayAnimator.DECAY_FACTOR;
+        this.mVelocityY *= DecayAnimator.DECAY_FACTOR;
 
         //if velocity is small then stop the animation
-        let velocityLength = Math.sqrt(this.velocityX*this.velocityX + this.velocityY*this.velocityY);
+        let velocityLength = Math.sqrt(this.mVelocityX*this.mVelocityX + this.mVelocityY*this.mVelocityY);
         if (velocityLength <= DecayAnimator.THRESHOLD) {
-            this.isActive = false;
+            this.mIsActive = false;
             return;
         }
-      //  console.log(`dx ${dx} dy ${dy}`);
-
         this.onUpdateCallback(dx, dy);
     }
-    setVelocity(vx, vy) {
-        this.velocityX = vx;
-        this.velocityY = vy;
-        this.isActive = true;
+    /**
+     * sets velocity and reactive animation
+     * 
+     * @param {number} velocityX
+     * @param {number} velocityY
+     */
+    setVelocity(velocityX:number, velocityY:number) {
+        this.mVelocityX = velocityX;
+        this.mVelocityY = velocityY;
+        this.mIsActive = true;
     }
 
 

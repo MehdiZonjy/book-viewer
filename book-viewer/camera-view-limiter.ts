@@ -1,4 +1,11 @@
 import {Camera} from '../engine/core';
+
+/**
+ * prevents the camera from moving outside the bounderis of book area
+ * 
+ * @export
+ * @class CameraViewLimiter
+ */
 export class CameraViewLimiter {
     private mMinX: number;
     private mMaxX: number;
@@ -17,6 +24,7 @@ export class CameraViewLimiter {
 
 
     update() {
+        // the coords of TopLeft and BottomRight corners of the visisble portion of the screen
         let viewBounds = this.mCamera.getVisisbleViewBounds();
         let shiftX = 0, shiftY = 0;
         if (viewBounds[0][0] < this.mMinX) 
