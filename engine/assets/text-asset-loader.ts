@@ -19,7 +19,9 @@ export enum FileType {
  * @implements {ILoader}
  */
 export class TextAssetLoader extends XMLHttpRequestLoader {
-
+    constructor(){
+        super(null)
+    }
 
     protected onRequestLoaded(assetEntry, fileType: FileType, req: XMLHttpRequest, resolve, reject) {
         let fileContent = null;

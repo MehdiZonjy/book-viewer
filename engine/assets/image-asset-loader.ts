@@ -6,6 +6,7 @@ import {XMLHttpRequestLoader} from './xml-http-request-loader';
 
 export const IMAGE_LOADER_TYPE = Symbol('image-asset-loader');
 
+
 /**
  * loads images as HTMLImageElement asset
  * since we can't abort an image request made by setting image.src = assetEntry.name 
@@ -16,6 +17,10 @@ export const IMAGE_LOADER_TYPE = Symbol('image-asset-loader');
  * @implements {ILoader}
  */
 export class ImageAssetLoader extends XMLHttpRequestLoader {
+
+    constructor(){
+        super(null);
+    }
 
     protected onRequestLoaded(assetEntry, arg, req: XMLHttpRequest, resolve, reject) {
         //once image has been loaded via XMLHttpRequest and cahced by browser, let's reload it again using Image 
