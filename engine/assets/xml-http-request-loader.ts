@@ -13,8 +13,6 @@ export abstract class XMLHttpRequestLoader implements ILoader {
 
             req.onreadystatechange = () => {
                 if ((req.readyState === 4) && (req.status !== 200)) {
-                    alert(assetEntry.Name + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
-                        "The index.html file must be loaded by a web-server.]");
                     assetEntry.LoaderExtra = null;
                     reject(assetEntry);
 
