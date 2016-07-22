@@ -70,8 +70,8 @@ export class Texture implements IDisposable {
     // Set the parameters so we can render any size image.
     this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_WRAP_S, this.mGl.CLAMP_TO_EDGE);
     this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_WRAP_T, this.mGl.CLAMP_TO_EDGE);
-    this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_MIN_FILTER, this.mGl.NEAREST);
-    this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_MAG_FILTER, this.mGl.NEAREST);
+    this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_MIN_FILTER, this.mGl.LINEAR);
+    this.mGl.texParameteri(this.mGl.TEXTURE_2D, this.mGl.TEXTURE_MAG_FILTER, this.mGl.LINEAR);
 
   }
 

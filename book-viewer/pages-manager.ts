@@ -154,9 +154,12 @@ export class PagesManager {
         let topVisisblePageId = topVisisblePageIndex + this.mFirstPageId;
         let bottomVisisblePageId = bottomVisisblePageIndex + this.mFirstPageId;
 
+
         //if there are no changes to visisble pages then there is no need to update anything
         if (topVisisblePageId == this.mTopVisisblePageId && this.mBottomVisisblePageId == bottomVisisblePageId)
             return;
+
+
 
         this.mTopVisisblePageId = topVisisblePageId;
         this.mBottomVisisblePageId = bottomVisisblePageId;
@@ -178,6 +181,7 @@ export class PagesManager {
             else
                 oldVisisblePages[page.PageId] = page;
         }
+
 
         //add new pages
         this.mPages = []
@@ -211,6 +215,7 @@ export class PagesManager {
         if (!this.mIsReady)
             return;
         shader.beginDraw(projectionView);
+ //           console.log(cameraView);
         for (let i = 0, l = this.mPages.length; i < l; i++) {
             this.mPages[i].draw(shader, cameraView);
         }
