@@ -1,11 +1,7 @@
 import {BaseGame, Texture}from '../engine/core/';
-import {ColoredSprite, TexturedSprite} from '../engine/sprites/';
 import {FPSCounter} from '../engine/misc/';
-import {DecayAnimator} from './decay-animator';
-import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
 import {PagesManager} from './pages-manager';
-
-import {CameraController} from './camera/camera-controller';
+import {CameraController} from './camera';
 /**
  * Book Viewer Application main class
  * 
@@ -13,7 +9,7 @@ import {CameraController} from './camera/camera-controller';
  * @class DemoGame
  * @extends {BaseGame}
  */
-export class DemoGame extends BaseGame {
+export class BookViewerApp extends BaseGame {
     /**
      * 
      * 
@@ -21,29 +17,22 @@ export class DemoGame extends BaseGame {
      * @type {FPSCounter}
      */
     private fpsCounter: FPSCounter;
-    
+ 
     /**
-     * 
-     * 
-     * @private
-     * @type {CameraViewAnimator}
-     */
-//    private mCameraViewAnimator: CameraViewAnimator;
-    /**
-     * 
-     * 
-     * @private
-     * @type {CameraViewLimiter}
-     */
-  //  private mCameraViewLimiter: CameraViewLimiter;
-    /**
-     * 
+     * handles rendering ,loading,unloading and updating pages 
      * 
      * @private
      * @type {PagesManager}
      */
     private mPagesManager: PagesManager;
 
+
+    /**
+     * controls camera movement gestures
+     * 
+     * @private
+     * @type {CameraController}
+     */
     private mCameraController:CameraController;
 
 
@@ -51,20 +40,13 @@ export class DemoGame extends BaseGame {
         super({});
         this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager, this.mCanvas.width, this.mCanvas.height,
             20, 30, './media/{0}.jpg');
-     //   this.mCameraViewAnimator = new CameraViewAnimator(this.mCanvas, this.mCamera);
-     //   this.mCameraViewLimiter = new CameraViewLimiter(this.mCamera, 0, this.mCanvas.width, 0, this.mPagesManager.LastPageMaxY );
-    
         this.mCameraController=new CameraController(this.mCanvas,this.mCamera,this.mPagesManager.LastPageMaxY);
         this.fpsCounter = new FPSCounter();
     }
 
 
     protected update(deltaTime) {
-        //this.mCameraViewAnimator.update(deltaTime);
-
         this.fpsCounter.update(deltaTime);
-      //  this.mCameraViewLimiter.update();
-
         this.mCameraController.update(deltaTime);
         this.mPagesManager.update();
 
@@ -82,4 +64,4 @@ export class DemoGame extends BaseGame {
 
 
 if(window)
-window['BookViewer'] = DemoGame;
+window['BookViewer'] = BookViewerApp;
