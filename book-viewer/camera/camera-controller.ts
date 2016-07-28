@@ -1,17 +1,40 @@
-import {GestureDetector, IGestureCallback} from './gesture-detector';
+import {GestureDetector, IGestureCallback, CameraBounds} from './misc';
 import {Camera} from '../../engine/core';
 import {range} from '../../engine/math';
-import {FlingAnimator,ScaleAnimator} from './animators';
+import {ScrollAnimator, ScaleAnimator} from './animators';
+
+const MIN_SCALE=0.5;
+const MAX_SCALE=1.75;
+
 export class CameraController implements IGestureCallback {
     private mGestureDetector: GestureDetector;
-    private mFlingAnimator: FlingAnimator;
+    private mFlingAnimator: ScrollAnimator;
     private mScaleAnimator: ScaleAnimator;
+    private mCameraBounds: CameraBounds;
     constructor(private mCanvas: HTMLCanvasElement, private mCamera: Camera, private mMaxY) {
         this.mGestureDetector = new GestureDetector(this.mCanvas, this);
-        this.mFlingAnimator = new FlingAnimator(this.mCamera);
+        this.mCameraBounds = new CameraBounds(this.mCamera, this.mCanvas, mMaxY);
         this.mScaleAnimator = new ScaleAnimator(this.mAnimateScaleCallback);
+        this.mFlingAnimator = new ScrollAnimator(this.mCameraBounds, this.mCamera);
+
     }
     private mAnimateScaleCallback = (targetScale: number, centerX: number, centerY: number, hasFinished: boolean) => {
+
+        this.applyScale(targetScale, centerX, centerY);
+        console.log('update scale callback');
+        if (hasFinished) {
+            console.log('scale animation finished');
+            this.mCameraBounds.update();
+            this.mFlingAnimator.pullBack();
+        }
+
+
+
+
+    }
+    private applyScale(targetScale: number, centerX, centerY) {
+        targetScale = range(targetScale, MIN_SCALE,MAX_SCALE);
+
         //to scale at a point:
         // calculate the point transformation relative to viewPort
         let p1 = this.mCamera.transformPointInverse(centerX, centerY);// this.transformation.applyToInversePointPoint(centerX, centerY);
@@ -19,14 +42,8 @@ export class CameraController implements IGestureCallback {
         this.mCamera.postTranslation(p1[0], p1[1]);
         //apply scale
         this.mCamera.setScale(targetScale, targetScale);
-
         // translate back to where we were
         this.mCamera.postTranslation(-p1[0], -p1[1]);
-        console.log('update scale callback');
-        if (hasFinished) {
-            console.log('scale animation finished');
-            this.mFlingAnimator.pullBack(this.mCanvas.width, this.mMaxY);
-        }
 
 
     }
@@ -38,34 +55,15 @@ export class CameraController implements IGestureCallback {
 
 
         let targetScale = this.mCamera.ScaleX * scale;
-        targetScale = range(targetScale, 0.5, 1.75);
-        /* if (targetScale < 1) {
-             centerX = this.mCanvas.width / 2;
-             centerY = this.mCanvas.height / 2;
-         }*/
-
         if (shouldAnimate) {
             this.mScaleAnimator.init(this.mCamera.ScaleX, targetScale, centerX, centerY);
             return;
         }
-
-
-        //to scale at a point:
-        // calculate the point transformation relative to viewPort
-        let p1 = this.mCamera.transformPointInverse(centerX, centerY);// this.transformation.applyToInversePointPoint(centerX, centerY);
-        // translate to point
-        this.mCamera.postTranslation(p1[0], p1[1]);
-        //apply scale
-        this.mCamera.setScale(targetScale, targetScale);
-
-        // translate back to where we were
-        this.mCamera.postTranslation(-p1[0], -p1[1]);
-
-
-
+        this.applyScale(targetScale,centerX,centerY);
     }
     public onScaleFinished() {
-        this.mFlingAnimator.pullBack(this.mCanvas.width, this.mMaxY);
+        this.mCameraBounds.update();
+        this.mFlingAnimator.pullBack();
         console.log('onscale finished');
 
     }
@@ -75,22 +73,42 @@ export class CameraController implements IGestureCallback {
             this.mFlingAnimator.finish();
         }
         const currentScale = this.mCamera.ScaleX;
-        this.mCamera.postTranslation( dx/currentScale, dy/currentScale);
+        this.mCamera.postTranslation(dx / currentScale, dy / currentScale);
+
+
+
+        this.mCameraBounds.update();
+        let deltaX = 0;
+        let deltaY = 0;
+        if (this.mCameraBounds.CurrentX < this.mCameraBounds.MinX)
+            deltaX = this.mCameraBounds.CurrentX - this.mCameraBounds.MinX;
+        else if (this.mCameraBounds.CurrentX > this.mCameraBounds.MaxX)
+            deltaX = this.mCameraBounds.CurrentX - this.mCameraBounds.MaxX;
+
+        if (this.mCameraBounds.CurrentY < this.mCameraBounds.MinY)
+            deltaY = this.mCameraBounds.CurrentY - this.mCameraBounds.MinY;
+        else if (this.mCameraBounds.CurrentY > this.mCameraBounds.MaxY)
+            deltaY = this.mCameraBounds.CurrentY - this.mCameraBounds.MaxY;
+        if (deltaX != 0 || deltaY != 0) {
+            this.mCamera.postTranslation(deltaX, deltaY);
+            console.log(`deltaX ${deltaX} deltaY ${deltaY}`);
+
+        }
     }
 
     public onPanFinished(flingTriggered) {
         console.log('onPanFinished');
         console.log(`flingAnimator.IsFinshed ${this.mFlingAnimator.isFinished()}`);
-        console.log(`flingTriggered ${flingTriggered}`);        
+        console.log(`flingTriggered ${flingTriggered}`);
         if (this.mFlingAnimator.isFinished() && !flingTriggered) {
-            this.mFlingAnimator.pullBack(this.mCanvas.width, this.mMaxY);
+            this.mCameraBounds.update();
+            this.mFlingAnimator.pullBack();
         }
     }
     public onFling(velocityX: number, velocityY: number) {
         console.log(`onfling ${velocityX} ${velocityY}`);
-        this.mFlingAnimator.fling(this.mCanvas.width, this.mMaxY, velocityX, velocityY);
-
-
+        this.mCameraBounds.update();
+        this.mFlingAnimator.fling(velocityX, velocityY);
     }
 
     public update(deltaTime: number) {
