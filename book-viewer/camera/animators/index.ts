@@ -1,2 +1,2 @@
-export * from './fling-animator';
+export * from './scroll-animator';
 export * from './scale-animator';
