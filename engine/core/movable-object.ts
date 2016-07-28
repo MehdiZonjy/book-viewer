@@ -11,13 +11,6 @@ import {mat3, vec2, vec3, GLM} from 'gl-matrix';
 export abstract class MovableObject {
 
     /**
-     * indicates that the transformation matrix has been changed 
-     * 
-     * @private
-     * @type {boolean}
-     */
-    private mIsTransformationDirty: boolean;
-    /**
      * a cahced version of the inverse of transformation matrix 
      * @private
      * @type {GLM.IArray}
@@ -33,14 +26,18 @@ export abstract class MovableObject {
      */
     private mTransformation: GLM.IArray;
 
+
+    private mVersion: number;
+    private mInverseTransVersion: number;
+
     /**
      * Creates an instance of MovableObject.
      * 
      */
     constructor() {
         this.mTransformation = mat3.create();
-        this.mCachedInverse=mat3.create();
-        this.mIsTransformationDirty=true;
+        this.mCachedInverse = mat3.create();
+        this.mVersion = 0;
     }
     /**
      * returns the transformation matrix.
@@ -48,10 +45,7 @@ export abstract class MovableObject {
      * Any modification to transformation matrix shouldn't be performed using {MovableObject} interface.
      * @readonly
      */
-    public get Transformations():GLM.IArray {
-        if (this.mIsTransformationDirty) {
-            //recalc transformations matrix
-        }
+    public get Transformations(): GLM.IArray {
         return this.mTransformation;
     }
 
@@ -66,8 +60,8 @@ export abstract class MovableObject {
      * get X position
      * @readonly 
      * @type {number}
-     */  
-    public get PositionX():number {
+     */
+    public get PositionX(): number {
         return this.mTransformation[MatrixHelper.TRANSLATION_X];
     }
     /**
@@ -75,14 +69,14 @@ export abstract class MovableObject {
      * @readonly
      * @type {number}
      */
-    public get PositionY():number {
+    public get PositionY(): number {
         return this.mTransformation[MatrixHelper.TRANSLATION_X];
     }
     /**
      * get position as vector 
      * @readonly
      */
-    public get Position():number[] {
+    public get Position(): number[] {
         return [this.mTransformation[MatrixHelper.TRANSLATION_X], this.mTransformation[MatrixHelper.TRANSLATION_Y]];
     }
     /**
@@ -99,15 +93,21 @@ export abstract class MovableObject {
     public get ScaleY() {
         return this.mTransformation[MatrixHelper.SCALE_Y];
     }
+
+    public get Version() {
+        return this.mVersion;
+    }
     /**
      * returns the inverse of transformation matrix 
      * @readonly
      * @type {GLM.IArray}
      */
     public get InverseTransform(): GLM.IArray {
-        if (this.mIsTransformationDirty)
+        if (this.mInverseTransVersion !== this.mVersion) {
             mat3.invert(this.mCachedInverse, this.mTransformation);
-            //TODO should reset mIsTransformationDirty to false, maybe should also call an abstract function so children of this class can do some recalculations as well 
+            this.mInverseTransVersion = this.mVersion;
+        }
+        //TODO should reset mIsTransformationDirty to false, maybe should also call an abstract function so children of this class can do some recalculations as well 
         return this.mCachedInverse;
     }
 
@@ -121,29 +121,33 @@ export abstract class MovableObject {
      */
     public reset() {
         mat3.identity(this.mTransformation);
+        this.mVersion++;
     }
     /**
      * apply translation
      * @param {number} deltaX
      * @param {number} deltaY
      */
-    public postTranslation(deltaX:number, deltaY:number) {
+    public postTranslation(deltaX: number, deltaY: number) {
         mat3.translate(this.mTransformation, this.mTransformation, vec2.fromValues(deltaX, deltaY));
+        this.mVersion++;
     }
     /**
      * apply scale 
      * @param {number} scaleX
      * @param {number} scaleY
      */
-    public postScale(scaleX:number, scaleY:number) {
+    public postScale(scaleX: number, scaleY: number) {
         mat3.scale(this.mTransformation, this.mTransformation, vec2.fromValues(scaleX, scaleY));
+        this.mVersion++;
     }
     /**
      * scale x and y uniformly 
      * @param {number} scale
      */
-    public postUniformScale(scale:number) {
+    public postUniformScale(scale: number) {
         this.postScale(scale, scale);
+        this.mVersion++;
     }
     /**
      * set scale to targetScaleX and targetScaleY 
@@ -151,8 +155,9 @@ export abstract class MovableObject {
      * @param {number} targetScaleX
      * @param {number} targetScaleY
      */
-    public setScale(targetScaleX:number, targetScaleY:number) {
+    public setScale(targetScaleX: number, targetScaleY: number) {
         this.postScale(targetScaleX / this.ScaleX, targetScaleY / this.ScaleY);
+        this.mVersion++;
     }
     /**
      * set position to X and Y 
@@ -160,9 +165,10 @@ export abstract class MovableObject {
      * @param {number} x
      * @param {number} y
      */
-    public setTranslation(x:number, y:number) {
+    public setTranslation(x: number, y: number) {
         this.postTranslation(-this.PositionX, -this.PositionY);
         this.postTranslation(x, y);
+        this.mVersion++;
 
     }
 
@@ -173,7 +179,7 @@ export abstract class MovableObject {
      * @param {number} y
      * @returns {GLM.IArray} transformed point
      */
-    public transformPoint(x:number, y:number):GLM.IArray {
+    public transformPoint(x: number, y: number): GLM.IArray {
         let point = vec2.fromValues(x, y);
         vec2.transformMat3(point, point, this.Transformations);
         return point;
@@ -185,9 +191,9 @@ export abstract class MovableObject {
      * @param {number} y
      * @returns {GLM.IArray}  transformed point
      */
-    public transformPointInverse(x:number,y:number):GLM.IArray{
-        let point = vec2.fromValues(x,y);
-        vec2.transformMat3(point,point,this.InverseTransform);
+    public transformPointInverse(x: number, y: number): GLM.IArray {
+        let point = vec2.fromValues(x, y);
+        vec2.transformMat3(point, point, this.InverseTransform);
         return point;
     }
 }

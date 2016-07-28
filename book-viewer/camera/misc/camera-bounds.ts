@@ -1,5 +1,6 @@
 import {Camera} from '../../../engine/core';
 export class CameraBounds {
+    private mVersion: number;
     private mMinX;
     private mMaxX;
     private mMinY;
@@ -37,6 +38,9 @@ export class CameraBounds {
     }
 
     update() {
+        if (this.mCamera.Version === this.mVersion)
+            return;
+
         const visibleArea = this.mCamera.getVisisbleViewBounds();
         this.mVisibleAreaWidth = Math.abs(visibleArea[0][0] - visibleArea[1][0]);
         this.mVisibleAreaHeight = Math.abs(visibleArea[0][1] - visibleArea[1][1]);
@@ -61,6 +65,8 @@ export class CameraBounds {
         console.log(`minY ${this.mMinY} maxY ${this.mMaxY}`);
         console.log(`minX ${this.mMinX} maxX ${this.mMaxX}`);
         console.log(`currentX ${this.mCurrentX} currentY ${this.mCurrentY}`);
+
+        this.mVersion = this.mCamera.Version;
 
     }
 

@@ -11,6 +11,22 @@ import {mat3, GLM} from 'gl-matrix';
  * @extends {MovableObject}
  */
 export class Camera extends MovableObject {
+    
+    /**
+     * used to check if {mCachedViewBounds} should be recalculated 
+     * 
+     * @private
+     * @type {number}
+     */
+    private mViewBoundsVersion: number;
+    /**
+     * to optimize performance we keep a cached version of viewbounds
+     * 
+     * @private
+     * @type {GLM.IArray[]}
+     */
+    private mCachedViewBounds: GLM.IArray[];
+
     /**
      * Projection Matrix 
      * 
@@ -54,9 +70,13 @@ export class Camera extends MovableObject {
      * BottomRight = (canvas.width, canvas.height) * InverseTransformationMatrix
      * @returns {GLM.IArray[]} first Element is a vector of TopLeft corner, second Element is a vector of BottomRight corner
      */
-    public getVisisbleViewBounds():GLM.IArray[] {
+    public getVisisbleViewBounds(): GLM.IArray[] {
         //TODO add some kind of cache for viewBounds
-        return [this.transformPointInverse(0, 0), this.transformPointInverse(this.mCanvas.width, this.mCanvas.height)];
+        if (this.mViewBoundsVersion !== this.Version) {
+            this.mCachedViewBounds = [this.transformPointInverse(0, 0), this.transformPointInverse(this.mCanvas.width, this.mCanvas.height)];
+            this.mViewBoundsVersion = this.Version;
+        }
+        return this.mCachedViewBounds;
     }
 
     /**
@@ -66,7 +86,7 @@ export class Camera extends MovableObject {
      * @param {number} y
      * @returns {boolean}
      */
-    public isPointVisble(x:number, y:number):boolean {
+    public isPointVisble(x: number, y: number): boolean {
         let viewBounds = this.getVisisbleViewBounds();
         return x >= viewBounds[0][0] && x <= viewBounds[1][0] && y >= viewBounds[0][1] && y <= viewBounds[1][1];
 
@@ -81,7 +101,7 @@ export class Camera extends MovableObject {
      * @param {number} width
      * @param {number} height
      */
-    private createProjection(width:number, height:number) {
+    private createProjection(width: number, height: number) {
         this.mProjection = mat3.create();
         this.mProjection[0] = 2 / width;
         this.mProjection[4] = -2 / height;
