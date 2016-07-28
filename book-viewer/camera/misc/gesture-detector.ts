@@ -1,5 +1,5 @@
 import * as Hammer from 'hammerjs';
-import {VelocityTracker} from './velocity/velocity-tracker';
+import {VelocityTracker} from '../velocity/velocity-tracker';
 //pinch  stop add a cool down before you start recieving pan
 //import {IGestureCallback} from './gesture-detect';
 
@@ -94,7 +94,7 @@ export class GestureDetector {
                     const currentPositionY = e.pointers[0].clientY;
                     this.mVelocityTracker.addMovement(Date.now(), currentPositionX, currentPositionY);
 
-                    this.mVelocityTracker.getVelocity(velocity, 1250);
+                    this.mVelocityTracker.getVelocity(velocity, 1000*window.devicePixelRatio);
                     //this.mPanAnimator.setVelocity(velocity[0] * 1000, velocity[1] * 1000);
                     let triggerFling =Math.max(Math.abs(velocity[0]), Math.abs(velocity[1])) > MINIMUM_VELOCITY 
                     if (triggerFling)
