@@ -1,6 +1,6 @@
 import {SimpleColorShader, SimpleTextureShader} from '../shaders';
 import {Camera} from './';
-import {AssetsManager, TextAssetLoader,ImageAssetLoader,IMAGE_LOADER_TYPE,TEXT_LOADER_TYPE} from '../assets';
+import {AssetsManager, TextAssetLoader, ImageAssetLoader, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../assets';
 /// <reference path="../gl-matrix.d.ts" />
 
 /**
@@ -64,12 +64,18 @@ export abstract class BaseGame {
         //init
         this.mCanvas = createCanvas();
         this.mGl = createWebGLContext(this.mCanvas);
+
+
+        // Allows transperency with textures.
+        this.mGl.blendFunc(this.mGl.SRC_ALPHA, this.mGl.ONE_MINUS_SRC_ALPHA);
+        this.mGl.enable(this.mGl.BLEND);
+
         this.mSimpleColorShader = new SimpleColorShader(this.mGl);
         this.mSimpleTextureShader = new SimpleTextureShader(this.mGl);
         this.mCamera = new Camera(this.mCanvas);
         this.mAssetsManager = new AssetsManager();
         this.mAssetsManager.registerLoader(new TextAssetLoader(), TEXT_LOADER_TYPE);
-        this.mAssetsManager.registerLoader(new ImageAssetLoader(),IMAGE_LOADER_TYPE);
+        this.mAssetsManager.registerLoader(new ImageAssetLoader(), IMAGE_LOADER_TYPE);
         //start main application loop
         requestAnimationFrame(this.mainLoop);
     }
@@ -79,7 +85,7 @@ export abstract class BaseGame {
      * 
      * @private
      */
-    private mainLoop = (now:number) => {
+    private mainLoop = (now: number) => {
         //request another frame update to keep the MainLoop running
         requestAnimationFrame(this.mainLoop);
 
@@ -114,7 +120,7 @@ export abstract class BaseGame {
      * @param {number} b
      * @param {number} [a=1]
      */
-    protected clearColor(r:number, g:number, b:number, a = 1) {
+    protected clearColor(r: number, g: number, b: number, a = 1) {
         this.mGl.clearColor(r, g, b, a);
         this.mGl.clear(this.mGl.COLOR_BUFFER_BIT);
     }
@@ -126,7 +132,7 @@ export abstract class BaseGame {
      * @abstract
      * @param {number} deltaTime
      */
-    protected abstract update(deltaTime:number);
+    protected abstract update(deltaTime: number);
     /**
      * draw scene 
      * 
@@ -134,7 +140,7 @@ export abstract class BaseGame {
      * @abstract
      * @param {number} deltaTime
      */
-    protected abstract draw(deltaTime:number);
+    protected abstract draw(deltaTime: number);
 
 }
 
@@ -149,7 +155,8 @@ function createCanvas() {
 
 
 function createWebGLContext(canvas) {
-    let gl = canvas.getContext('experimental-webgl');
+    let gl = canvas.getContext('experimental-webgl', { alpha: false });
+
     if (gl == null) {
         //TODO add log
         alert("'You don't have WebGL support");
