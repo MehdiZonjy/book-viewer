@@ -3,8 +3,8 @@ import {Camera} from '../../engine/core';
 import {range} from '../../engine/math';
 import {ScrollAnimator, ScaleAnimator} from './animators';
 
-const MIN_SCALE=0.5;
-const MAX_SCALE=1.75;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 1.75;
 
 export class CameraController implements IGestureCallback {
     private mGestureDetector: GestureDetector;
@@ -33,7 +33,7 @@ export class CameraController implements IGestureCallback {
 
     }
     private applyScale(targetScale: number, centerX, centerY) {
-        targetScale = range(targetScale, MIN_SCALE,MAX_SCALE);
+        targetScale = range(targetScale, MIN_SCALE, MAX_SCALE);
 
         //to scale at a point:
         // calculate the point transformation relative to viewPort
@@ -59,7 +59,7 @@ export class CameraController implements IGestureCallback {
             this.mScaleAnimator.init(this.mCamera.ScaleX, targetScale, centerX, centerY);
             return;
         }
-        this.applyScale(targetScale,centerX,centerY);
+        this.applyScale(targetScale, centerX, centerY);
     }
     public onScaleFinished() {
         this.mCameraBounds.update();
@@ -75,20 +75,27 @@ export class CameraController implements IGestureCallback {
         const currentScale = this.mCamera.ScaleX;
         this.mCamera.postTranslation(dx / currentScale, dy / currentScale);
 
+        this.restrictCameraToBounds();
+    }
+    private restrictCameraToBounds() {
 
-
+        //if camera outside of boudns , then pull it back
         this.mCameraBounds.update();
         let deltaX = 0;
         let deltaY = 0;
+        //calculate deltaX shift
         if (this.mCameraBounds.CurrentX < this.mCameraBounds.MinX)
             deltaX = this.mCameraBounds.CurrentX - this.mCameraBounds.MinX;
         else if (this.mCameraBounds.CurrentX > this.mCameraBounds.MaxX)
             deltaX = this.mCameraBounds.CurrentX - this.mCameraBounds.MaxX;
 
+        //calculate deltaY shift
         if (this.mCameraBounds.CurrentY < this.mCameraBounds.MinY)
             deltaY = this.mCameraBounds.CurrentY - this.mCameraBounds.MinY;
         else if (this.mCameraBounds.CurrentY > this.mCameraBounds.MaxY)
             deltaY = this.mCameraBounds.CurrentY - this.mCameraBounds.MaxY;
+
+        //apply any neccessery shift to restrict camera bounds
         if (deltaX != 0 || deltaY != 0) {
             this.mCamera.postTranslation(deltaX, deltaY);
             console.log(`deltaX ${deltaX} deltaY ${deltaY}`);
