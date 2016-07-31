@@ -70,7 +70,7 @@ export abstract class MovableObject {
      * @type {number}
      */
     public get PositionY(): number {
-        return this.mTransformation[MatrixHelper.TRANSLATION_X];
+        return this.mTransformation[MatrixHelper.TRANSLATION_Y];
     }
     /**
      * get position as vector 
