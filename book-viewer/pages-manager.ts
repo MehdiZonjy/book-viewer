@@ -1,4 +1,4 @@
-import {ColoredSprite, TexturedSprite} from '../engine/sprites/';
+import {ColoredSprite, TexturedSprite,AnimatedSprite} from '../engine/sprites/';
 import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
 import {Camera, Texture} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
@@ -6,6 +6,7 @@ import formatString = require('string-format');
 import padLeft = require('pad-left');
 import {Page} from './page';
 import {SimpleTextureShader} from '../engine/shaders';
+import {Atlas, AtlasEntry} from '../engine/atlas';
 
 /**
  * Manages book pages, and efficiently updating which page should be loaded/unloaded
@@ -64,7 +65,7 @@ export class PagesManager {
      * 
      * @private
      */
-    private mLoadingPageTexture;
+    private mLoadingPageSprite:AnimatedSprite;
     /**
      * true if PagesManager is fully loaded and ready to update and draw 
      * 
@@ -128,10 +129,27 @@ export class PagesManager {
         this.mPages = [];
 
         //load place holder image 
-        this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, null, (image) => {
-            this.mLoadingPageTexture = new Texture(this.mGl, image);
+        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.json', TEXT_LOADER_TYPE, FileType.json);
+        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.png', IMAGE_LOADER_TYPE, null);
+        this.mAssetsManager.startGroupRequest('loading', () => {
+            const atlasData: any = this.mAssetsManager.getAsset('./media/loading/loading.json');
+            const atlasImage = this.mAssetsManager.getAsset<HTMLImageElement>('./media/loading/loading.png');
+            const atlasTexture = new Texture(this.mGl, atlasImage);
+            const atlasEntries: AtlasEntry[] = atlasData.TextureAtlas.SubTexture;
+            const spriteWidth = atlasEntries[0]._width;
+            const spriteHeight = atlasEntries[0]._height;
+            const atlas = new Atlas(atlasTexture, atlasEntries);
+
+            this.mLoadingPageSprite = new AnimatedSprite(this.mGl, 20, atlas);
+            this.mLoadingPageSprite.postTranslation(0, 0);
+            this.mLoadingPageSprite.setWidth(spriteWidth);
+            this.mLoadingPageSprite.setHeight(spriteHeight);
             this.mIsReady = true;
         });
+        /* this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, null, (image) => {
+             this.mLoadingPageTexture = new Texture(this.mGl, image);
+             this.mIsReady = true;
+         });*/
     }
 
 
@@ -141,9 +159,11 @@ export class PagesManager {
      * 
      * @returns
      */
-    update() {
+    update(deltaTime:number) {
         if (!this.mIsReady)
             return;
+
+            this.mLoadingPageSprite.update(deltaTime);
 
         //calculate first and last visisble pages
         let visisbleViewBounds = this.mCamera.getVisisbleViewBounds();
@@ -193,7 +213,7 @@ export class PagesManager {
                 continue;
             }
             //create new Page instance and load the image asset
-            let page = new Page(pageId, this.mAssetsManager, formatString(this.mPagesBaseUrl, padLeft(pageId + '', 3, '0')), this.mGl, this.mLoadingPageTexture);
+            let page = new Page(pageId, this.mAssetsManager, formatString(this.mPagesBaseUrl, padLeft(pageId + '', 3, '0')), this.mGl, this.mLoadingPageSprite);
             let pageIndex = pageId - this.mFirstPageId;
             page.postTranslation(0, this.mPageHeight * pageIndex);
             page.postScale(this.mPageWidth, this.mPageHeight);
@@ -215,7 +235,7 @@ export class PagesManager {
         if (!this.mIsReady)
             return;
         shader.beginDraw(projectionView);
- //           console.log(cameraView);
+        //           console.log(cameraView);
         for (let i = 0, l = this.mPages.length; i < l; i++) {
             this.mPages[i].draw(shader, cameraView);
         }
