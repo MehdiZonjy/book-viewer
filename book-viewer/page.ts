@@ -59,7 +59,7 @@ export class Page extends TexturedSprite {
             const loadingSpriteWidth = this.mLoadingSprite.ScaleX;
             const loadingSpriteHeight = this.mLoadingSprite.ScaleY;
             this.mLoadingSprite.reset();
-            this.mLoadingSprite.postTranslation(this.PositionX+this.ScaleX/2-loadingSpriteWidth/2,this.PositionY);
+            this.mLoadingSprite.postTranslation(this.PositionX+this.ScaleX/2-loadingSpriteWidth/2,this.PositionY+this.ScaleY/2 - loadingSpriteHeight/2);
             this.mLoadingSprite.postScale(loadingSpriteWidth,loadingSpriteHeight);
             this.mLoadingSprite.draw(shader, view);
         }
