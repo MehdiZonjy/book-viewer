@@ -1,4 +1,4 @@
-import {BaseGame, Texture}from '../engine/core/';
+import {BaseGame}from '../engine/core/';
 import {FPSCounter} from '../engine/misc/';
 import {PagesManager} from './pages-manager';
 import {CameraController} from './camera';
@@ -17,7 +17,7 @@ export class BookViewerApp extends BaseGame {
      * @type {FPSCounter}
      */
     private fpsCounter: FPSCounter;
- 
+
     /**
      * handles rendering ,loading,unloading and updating pages 
      * 
@@ -33,14 +33,13 @@ export class BookViewerApp extends BaseGame {
      * @private
      * @type {CameraController}
      */
-    private mCameraController:CameraController;
-
+    private mCameraController: CameraController;
 
     constructor() {
         super({});
         this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager, this.mCanvas.width, this.mCanvas.height,
             20, 30, './media/{0}.jpg');
-        this.mCameraController=new CameraController(this.mCanvas,this.mCamera,this.mPagesManager.LastPageMaxY);
+        this.mCameraController = new CameraController(this.mCanvas, this.mCamera, this.mPagesManager.LastPageMaxY);
         this.fpsCounter = new FPSCounter();
     }
 
@@ -48,20 +47,17 @@ export class BookViewerApp extends BaseGame {
     protected update(deltaTime) {
         this.fpsCounter.update(deltaTime);
         this.mCameraController.update(deltaTime);
-        this.mPagesManager.update();
+        this.mPagesManager.update(deltaTime);
 
     }
 
     protected draw(deltaTime) {
-        this.clearColor(0, 0,0);
-        this.mPagesManager.draw(this.mSimpleTextureShader ,this.mCamera.Projection, this.mCamera.View);
+        this.clearColor(0, 0, 0);
+        this.mPagesManager.draw(this.mSimpleTextureShader, this.mCamera.Projection, this.mCamera.View);
         this.fpsCounter.draw();
-
     }
-
-
 }
 
 
-if(window)
-window['BookViewer'] = BookViewerApp;
+if (window)
+    window['BookViewer'] = BookViewerApp;
