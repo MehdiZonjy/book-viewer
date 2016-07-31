@@ -1,7 +1,7 @@
 import {GestureDetector, IGestureCallback, CameraBounds} from './misc';
 import {Camera} from '../../engine/core';
 import {range} from '../../engine/math';
-import {ScrollAnimator, ScaleAnimator} from './animators';
+import {ScrollAnimator, ScaleAnimator, ScrollAnimationTrigger} from './animators';
 
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.75;
@@ -68,7 +68,12 @@ export class CameraController implements IGestureCallback {
 
     }
     public onPan(dx: number, dy: number) {
+
         if (!this.mFlingAnimator.isFinished()) {
+
+            if (this.mFlingAnimator.getAnimationTriggerSource() == ScrollAnimationTrigger.Pullback)
+                return;
+
             console.log('cancel active fling');
             this.mFlingAnimator.finish();
         }
