@@ -112,13 +112,24 @@ export class VelocityTrackerStrategy {
             yDet = solveLeastSquares(time, y, w, m, n, estimator.YCoeff);
             if(y[0] - y[m-1]<0&& estimator.YCoeff[1]>0)
             {
-                console.log('correct sign 1');
+                console.log('Y correct sign  1');
                 estimator.YCoeff[1]*=-1;
             }
             else if (y[0] - y[m-1] >0 && estimator.YCoeff[1]<0)
             {
-                console.log('correct sign 1');
+                console.log('Y correct sign 1');
                 estimator.YCoeff[1]*=-1;
+                
+            }
+             if(x[0] - x[m-1]<0&& estimator.XCoeff[1]>0)
+            {
+                console.log('X correct sign 1');
+                estimator.XCoeff[1]*=-1;
+            }
+            else if (x[0] - x[m-1] >0 && estimator.XCoeff[1]<0)
+            {
+                console.log('X correct sign 1');
+                estimator.XCoeff[1]*=-1;
                 
             }
 
