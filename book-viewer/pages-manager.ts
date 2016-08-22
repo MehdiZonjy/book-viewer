@@ -4,7 +4,7 @@ import {Camera, Texture, IBounds} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
 import formatString = require('string-format');
 import padLeft = require('pad-left');
-import {Page} from './page';
+import {PageDrawable} from './page-drawable';
 import {SimpleTextureShader} from '../engine/shaders';
 import {Atlas, AtlasTextureEntry} from '../engine/atlas';
 
@@ -59,7 +59,7 @@ export class PagesManager {
      * @private
      * @type {Page[]}
      */
-    private mPages: Page[];
+    private mPages: PageDrawable[];
     /**
      * used to display a place holder until the book page is loaded
      * 
@@ -242,7 +242,7 @@ export class PagesManager {
                 continue;
             }
             //create new Page instance and load the image asset
-            let page = new Page(pageId, this.mAssetsManager, formatString(this.mPagesBaseUrl, padLeft(pageId + '', 3, '0')), this.mGl, this.mLoadingPageSprite);
+            let page = new PageDrawable(pageId, this.mAssetsManager, formatString(this.mPagesBaseUrl, padLeft(pageId + '', 3, '0')), this.mGl, this.mLoadingPageSprite);
             let pageIndex = pageId - this.mFirstPageId;
             page.postTranslation(0, this.mPageHeight * pageIndex);
             page.postScale(this.mPageWidth, this.mPageHeight);
