@@ -1,4 +1,5 @@
-import {Camera} from '../../../engine/core';
+import {Camera, IBounds} from '../../../engine/core';
+import {PagesManager} from '../../pages-manager';
 export class CameraBounds {
     private mVersion: number;
     private mMinX;
@@ -11,10 +12,13 @@ export class CameraBounds {
     private mViewHeight;
     private mVisibleAreaWidth;
     private mVisibleAreaHeight;
-    constructor(private mCamera: Camera, private mCanvas: HTMLCanvasElement, private mTotalPagesHeight) {
-
-        this.mViewWidth = mCanvas.width;
-        this.mViewHeight = mCanvas.height;
+    constructor(private mCamera: Camera, private mPagesManager:PagesManager) {
+        this.mCamera.OnSizeChanged.subscribe((bounds) => {
+            this.mViewWidth = bounds.width;
+            this.mViewHeight = bounds.height;
+            this.mVersion++;
+            this.update();
+        });
     }
 
     public get MinX() {
@@ -61,7 +65,7 @@ export class CameraBounds {
             this.mMaxX = this.mMinX = -totalMargin / 2;
         }
 
-        this.mMaxY = Math.round(this.mTotalPagesHeight - this.mVisibleAreaHeight);
+        this.mMaxY = Math.round(this.mPagesManager.LastPageMaxY - this.mVisibleAreaHeight);
         console.log(`minY ${this.mMinY} maxY ${this.mMaxY}`);
         console.log(`minX ${this.mMinX} maxX ${this.mMaxX}`);
         console.log(`currentX ${this.mCurrentX} currentY ${this.mCurrentY}`);

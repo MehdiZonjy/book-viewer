@@ -1,8 +1,8 @@
 import {GestureDetector, IGestureCallback, CameraBounds} from './misc';
-import {Camera} from '../../engine/core';
+import {Camera, IBounds} from '../../engine/core';
 import {range} from '../../engine/math';
 import {ScrollAnimator, ScaleAnimator, ScrollAnimationTrigger} from './animators';
-
+import {PagesManager} from '../pages-manager';
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.75;
 
@@ -11,12 +11,22 @@ export class CameraController implements IGestureCallback {
     private mFlingAnimator: ScrollAnimator;
     private mScaleAnimator: ScaleAnimator;
     private mCameraBounds: CameraBounds;
-    constructor(private mCanvas: HTMLCanvasElement, private mCamera: Camera, private mMaxY) {
+    constructor(private mCanvas: HTMLCanvasElement, private mCamera: Camera, private pagesManager: PagesManager) {
         this.mGestureDetector = new GestureDetector(this.mCanvas, this);
-        this.mCameraBounds = new CameraBounds(this.mCamera, this.mCanvas, mMaxY);
+        this.mCameraBounds = new CameraBounds(this.mCamera, pagesManager);
         this.mScaleAnimator = new ScaleAnimator(this.mAnimateScaleCallback);
         this.mFlingAnimator = new ScrollAnimator(this.mCameraBounds, this.mCamera);
 
+
+        this.mCamera.OnSizeChanged.subscribe((bounds) => {
+            setTimeout(() => {
+                this.mFlingAnimator.finish();
+
+                this.mFlingAnimator.pullBack();
+
+            }, 0);
+
+        });
     }
     private mAnimateScaleCallback = (targetScale: number, centerX: number, centerY: number, hasFinished: boolean) => {
 
@@ -27,6 +37,7 @@ export class CameraController implements IGestureCallback {
             this.mCameraBounds.update();
             this.mFlingAnimator.pullBack();
         }
+
 
 
 

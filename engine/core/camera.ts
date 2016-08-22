@@ -1,7 +1,11 @@
 import {MatrixHelper}  from '../math';
 import {MovableObject} from './movable-object';
 import {mat3, GLM} from 'gl-matrix';
-
+import {ReplaySubject} from 'rxjs/ReplaySubject';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/debounceTime';
+import {IBounds} from './interfaces';
+import {IDisposable} from'./interfaces';
 //TODO handle canvas size change event
 
 /**
@@ -10,8 +14,8 @@ import {mat3, GLM} from 'gl-matrix';
  * @class Camera
  * @extends {MovableObject}
  */
-export class Camera extends MovableObject {
-    
+export class Camera extends MovableObject implements IDisposable{
+
     /**
      * used to check if {mCachedViewBounds} should be recalculated 
      * 
@@ -35,6 +39,39 @@ export class Camera extends MovableObject {
      */
     private mProjection: GLM.IArray;
 
+
+
+    /**
+     * current canvas width
+     * 
+     * @private
+     * @type {number}
+     */
+    private mOldWidth: number;
+    /**
+     * current canvas height
+     * 
+     * @private
+     * @type {number}
+     */
+    private mOldHeight: number;
+
+    /**
+     * underlying source of {mOnSizeChanged} events observable
+     * 
+     * @private
+     * @type {ReplaySubject<Bounds>}
+     */
+    private mSizeChanged$: ReplaySubject<IBounds>;
+    /**
+     * Observable events stream that fires everytime camera projection matrix changes  ( canvas size changes)
+     * 
+     * @private
+     * @type {Observable<Bounds>}
+     */
+    private mOnSizeChanged: Observable<IBounds>;
+
+
     /**
      * Creates an instance of Camera.
      * 
@@ -42,8 +79,23 @@ export class Camera extends MovableObject {
      */
     constructor(private mCanvas: HTMLCanvasElement) {
         super();
-        this.createProjection(mCanvas.width, mCanvas.height);
+        this.mSizeChanged$ = new ReplaySubject<IBounds>(1);
+
+        this.mOnSizeChanged = this.mSizeChanged$.asObservable().debounceTime(200);
+        this.refreshProjection();
     }
+
+    
+    /**
+     * Observable events stream that fires everytime camera projection matrix changes  ( canvas size changes)
+     * 
+     * @readonly
+     * @type {Observable<Bounds>}
+     */
+    public get OnSizeChanged(): Observable<IBounds> {
+        return this.mOnSizeChanged;
+    }
+
     /**
      * 
      * the transformation matrix inherited from {MovableObject} is the view Matrix
@@ -113,6 +165,23 @@ export class Camera extends MovableObject {
             -1, 1, 1
         */
     }
+    public refreshProjection() {
+        if (this.mCanvas.width == this.mOldWidth && this.mCanvas.height == this.mOldHeight)
+            return;
+        this.createProjection(this.mCanvas.width, this.mCanvas.height);
+        this.mOldWidth = this.mCanvas.width;
+        this.mOldHeight = this.mCanvas.height;
+        this.mViewBoundsVersion++;
+        this.mSizeChanged$.next({ width: this.mOldWidth, height: this.mOldHeight });
 
+    }
+
+
+    public dispose(){
+        this.mSizeChanged$.unsubscribe();
+    }
 
 }
+
+
+

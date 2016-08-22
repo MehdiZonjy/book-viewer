@@ -35,12 +35,13 @@ export class BookViewerApp extends BaseGame {
      */
     private mCameraController: CameraController;
 
-    constructor() {
-        super({});
-        this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager, this.mCanvas.width, this.mCanvas.height,
+    constructor(parentElementId: string) {
+        super({}, parentElementId);
+        this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager, 
             20, 30, './media/{0}.jpg');
-        this.mCameraController = new CameraController(this.mCanvas, this.mCamera, this.mPagesManager.LastPageMaxY);
-        this.fpsCounter = new FPSCounter();
+        this.mCameraController = new CameraController(this.mCanvas, this.mCamera, this.mPagesManager);
+        this.fpsCounter = new FPSCounter(parentElementId);
+
     }
 
 

@@ -25,7 +25,14 @@ export class FPSCounter{
      * @private
      */
     private mElapsedTime;
-    constructor(){
+
+
+    /**
+     * Creates an instance of FPSCounter.
+     * 
+     * @param {string} containerId: parent dom elementId 
+     */
+    constructor(containerId:string){
         this.mElapsedTime=0;
         this.mFPS=0;
         this.mFrameCount=0;
@@ -36,7 +43,7 @@ export class FPSCounter{
         this.mFPSContainer.style.height="50px";
         this.mFPSContainer.style.top="0px";
         this.mFPSContainer.style.left="0px";
-        document.getElementsByTagName('body')[0].appendChild(this.mFPSContainer);
+        document.getElementById(containerId).appendChild(this.mFPSContainer);
     }
     /**
      * Update FPS counter 

@@ -1,6 +1,6 @@
-import {ColoredSprite, TexturedSprite,AnimatedSprite} from '../engine/sprites/';
+import {ColoredSprite, TexturedSprite, AnimatedSprite} from '../engine/sprites/';
 import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
-import {Camera, Texture} from '../engine/core';
+import {Camera, Texture, IBounds} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
 import formatString = require('string-format');
 import padLeft = require('pad-left');
@@ -65,7 +65,7 @@ export class PagesManager {
      * 
      * @private
      */
-    private mLoadingPageSprite:AnimatedSprite;
+    private mLoadingPageSprite: AnimatedSprite;
     /**
      * true if PagesManager is fully loaded and ready to update and draw 
      * 
@@ -86,6 +86,9 @@ export class PagesManager {
      */
     private mBottomVisisblePageId;
 
+
+    private mViewWidth: number;
+    private mViewHeight: number;
     /**
      * the bottom value of the last page in the book 
      * 
@@ -108,7 +111,6 @@ export class PagesManager {
      * @param {string} mPagesBaseUrl. url of the location from which to load the pages in the following formula such as './media/{0}.jpg'
      */
     constructor(private mGl: WebGLRenderingContext, private mCamera: Camera, private mAssetsManager: AssetsManager,
-        private mViewWidth: number, private mViewHeight: number,
         private mFirstPageId: number, private mLastPageId: number, private mPagesBaseUrl: string
     ) {
         this.mIsReady = false;
@@ -118,16 +120,10 @@ export class PagesManager {
         // this.mAssetsManager.loadAsset(formatString(this.mPagesBaseUrl, padLeft(this.mFirstPageId+'', 3, '0')), IMAGE_LOADER_TYPE, [], (image: HTMLImageElement) => {
         // let bitmapWidth = image.naturalWidth;
         //  let bitmapHeight = image.naturalHeight;
-        let bitmapAR = PagesManager.BITMAP_WIDTH / PagesManager.BITMAP_HEIGHT;
 
 
-        this.mPageWidth = this.mViewWidth;
-        this.mPageHeight = this.mPageWidth / bitmapAR;
-
-        this.mPagesCount = this.mLastPageId - this.mFirstPageId;
-        this.mLastMaxPageY = (this.mPagesCount + 1) * this.mPageHeight;
         this.mPages = [];
-
+        this.mCamera.OnSizeChanged.subscribe(this.onCameraSizeChanged);
         //load place holder image 
         this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.json', TEXT_LOADER_TYPE, FileType.json);
         this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.png', IMAGE_LOADER_TYPE, null);
@@ -151,6 +147,34 @@ export class PagesManager {
              this.mIsReady = true;
          });*/
     }
+    onCameraSizeChanged = (bounds: IBounds) => {
+        this.mViewWidth = bounds.width;
+        this.mViewHeight = bounds.height;
+
+        const bitmapAR = PagesManager.BITMAP_WIDTH / PagesManager.BITMAP_HEIGHT;
+
+        this.mPageWidth = this.mViewWidth;
+        this.mPageHeight = this.mPageWidth / bitmapAR;
+
+        this.mPagesCount = this.mLastPageId - this.mFirstPageId;
+        this.mLastMaxPageY = (this.mPagesCount + 1) * this.mPageHeight;
+
+
+        for (let i = 0, l = this.mPages.length; i < l; i++) {
+            this.mPages[i].dispose();
+            /*
+            const page = this.mPages[i];
+            page.setWidth(this.mPageWidth);
+            page.setHeight(this.mPageHeight);*/
+        }
+        this.mPages = [];
+        this.mTopVisisblePageId = -1;
+        this.mBottomVisisblePageId = -1;
+
+        if (this.mIsReady)
+            this.updateVisisblePages();
+
+    }
 
 
 
@@ -159,11 +183,16 @@ export class PagesManager {
      * 
      * @returns
      */
-    update(deltaTime:number) {
+    update(deltaTime: number) {
         if (!this.mIsReady)
             return;
 
-            this.mLoadingPageSprite.update(deltaTime);
+        this.mLoadingPageSprite.update(deltaTime);
+        this.updateVisisblePages();
+
+    }
+
+    private updateVisisblePages() {
 
         //calculate first and last visisble pages
         let visisbleViewBounds = this.mCamera.getVisisbleViewBounds();

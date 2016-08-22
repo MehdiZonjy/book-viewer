@@ -1,6 +1,8 @@
 import {SimpleColorShader, SimpleTextureShader} from '../shaders';
 import {Camera} from './';
 import {AssetsManager, TextAssetLoader, ImageAssetLoader, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../assets';
+import * as $ from 'jquery';
+import {IDisposable} from './interfaces';
 /// <reference path="../gl-matrix.d.ts" />
 
 /**
@@ -10,7 +12,7 @@ import {AssetsManager, TextAssetLoader, ImageAssetLoader, IMAGE_LOADER_TYPE, TEX
  * @abstract
  * @class BaseGame
  */
-export abstract class BaseGame {
+export abstract class BaseGame implements IDisposable{
     /**
      * WebGL reference 
      * 
@@ -60,9 +62,11 @@ export abstract class BaseGame {
      * @private
      */
     private mLastFrameUpdate;
-    constructor(options) {
+
+    protected mCanvasParent: JQuery;
+    constructor(options, parentElementId: string) {
         //init
-        this.mCanvas = createCanvas();
+        this.mCanvas = createCanvas(parentElementId);
         this.mGl = createWebGLContext(this.mCanvas);
 
 
@@ -78,7 +82,25 @@ export abstract class BaseGame {
         this.mAssetsManager.registerLoader(new ImageAssetLoader(), IMAGE_LOADER_TYPE);
         //start main application loop
         requestAnimationFrame(this.mainLoop);
+
+        //register onResize event handler
+        this.mCanvasParent = $(`#${parentElementId}`);
+        $(window).resize(this.onCanvasResized);
+        
     }
+
+
+    /**
+     * Once the window size been changed, make sure canvas fills its container and update camera projection 
+     * 
+     * @private
+     */
+    private onCanvasResized = () => {
+        this.mCanvas.width = this.mCanvasParent.width();//window.innerWidth;
+        this.mCanvas.height = this.mCanvasParent.height();//window.innerHeight;
+        this.mCamera.refreshProjection();
+
+    };
 
     /**
      * Main Application Loop  
@@ -112,6 +134,12 @@ export abstract class BaseGame {
 
     }
 
+
+    public dispose(){
+        $(window).unbind("resize",this.onCanvasResized);
+    }
+
+
     /**
      * clears the viewPort with color 
      * @protected
@@ -144,12 +172,12 @@ export abstract class BaseGame {
 
 }
 
-function createCanvas() {
-    let body = document.getElementsByTagName('body')[0];
+function createCanvas(parentElementId: string) {
+    const parent = $(`#${parentElementId}`);// document.getElementsByTagName('body')[0];
     let canvas = document.createElement('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    body.appendChild(canvas);
+    canvas.width = parent.width();// window.innerWidth;
+    canvas.height = parent.height();//window.innerHeight;
+    parent.append(canvas);
     return canvas;
 }
 
