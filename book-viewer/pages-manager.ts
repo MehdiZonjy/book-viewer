@@ -2,12 +2,10 @@ import {ColoredSprite, TexturedSprite, AnimatedSprite} from '../engine/sprites/'
 import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
 import {Camera, Texture, IBounds} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
-import formatString = require('string-format');
-import padLeft = require('pad-left');
 import {PageDrawable} from './page-drawable';
 import {SimpleTextureShader} from '../engine/shaders';
 import {Atlas, AtlasTextureEntry} from '../engine/atlas';
-
+import {Page} from './page';
 /**
  * Manages book pages, and efficiently updating which page should be loaded/unloaded
  * 
@@ -16,12 +14,7 @@ import {Atlas, AtlasTextureEntry} from '../engine/atlas';
  */
 export class PagesManager {
 
-    private static get BITMAP_WIDTH() {
-        return 1200;
-    }
-    private static get BITMAP_HEIGHT() {
-        return 1650;
-    }
+   
     /**
      * the bottom value of the last page in the book 
      * 
@@ -59,7 +52,7 @@ export class PagesManager {
      * @private
      * @type {Page[]}
      */
-    private mPages: PageDrawable[];
+    private mPagesDrawable: PageDrawable[];
     /**
      * used to display a place holder until the book page is loaded
      * 
@@ -86,9 +79,28 @@ export class PagesManager {
      */
     private mBottomVisisblePageId;
 
-
+    /**
+     * canvas width 
+     * 
+     * @private
+     * @type {number}
+     */
     private mViewWidth: number;
+    /**
+     * canvas height 
+     * 
+     * @private
+     * @type {number}
+     */
     private mViewHeight: number;
+
+    private mFirstPageId:number;
+    private mLastPageId:number;
+    
+
+    private mPages:Map<number,Page>;
+
+
     /**
      * the bottom value of the last page in the book 
      * 
@@ -111,9 +123,17 @@ export class PagesManager {
      * @param {string} mPagesBaseUrl. url of the location from which to load the pages in the following formula such as './media/{0}.jpg'
      */
     constructor(private mGl: WebGLRenderingContext, private mCamera: Camera, private mAssetsManager: AssetsManager,
-        private mFirstPageId: number, private mLastPageId: number, private mPagesBaseUrl: string
+    pages:Page[],private mPageBitmapWidth:number, private mPageBitmapHeight:number
     ) {
         this.mIsReady = false;
+
+
+        this.mLastPageId=  pages[pages.length-1].id;
+        this.mFirstPageId = pages[0].id;
+
+        this.mPages=new Map();
+        pages.forEach((page)=>this.mPages.set(page.id,page));
+
 
 
         //load first image so we can calculate bounds of pages
@@ -122,7 +142,7 @@ export class PagesManager {
         //  let bitmapHeight = image.naturalHeight;
 
 
-        this.mPages = [];
+        this.mPagesDrawable = [];
         this.mCamera.OnSizeChanged.subscribe(this.onCameraSizeChanged);
         //load place holder image 
         this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.json', TEXT_LOADER_TYPE, FileType.json);
@@ -151,7 +171,7 @@ export class PagesManager {
         this.mViewWidth = bounds.width;
         this.mViewHeight = bounds.height;
 
-        const bitmapAR = PagesManager.BITMAP_WIDTH / PagesManager.BITMAP_HEIGHT;
+        const bitmapAR =this.mPageBitmapWidth / this.mPageBitmapHeight;
 
         this.mPageWidth = this.mViewWidth;
         this.mPageHeight = this.mPageWidth / bitmapAR;
@@ -160,14 +180,14 @@ export class PagesManager {
         this.mLastMaxPageY = (this.mPagesCount + 1) * this.mPageHeight;
 
 
-        for (let i = 0, l = this.mPages.length; i < l; i++) {
-            this.mPages[i].dispose();
+        for (let i = 0, l = this.mPagesDrawable.length; i < l; i++) {
+            this.mPagesDrawable[i].dispose();
             /*
             const page = this.mPages[i];
             page.setWidth(this.mPageWidth);
             page.setHeight(this.mPageHeight);*/
         }
-        this.mPages = [];
+        this.mPagesDrawable = [];
         this.mTopVisisblePageId = -1;
         this.mBottomVisisblePageId = -1;
 
@@ -222,8 +242,8 @@ export class PagesManager {
         let oldVisisblePages: any = {};
         //of the loaded pages find which ones outside {minPageId},{maxPageId} range and dispose  them 
         //and keep a reference to the visisble ones in {oldVisisblePages}
-        for (let i = 0; i < this.mPages.length; i++) {
-            let page = this.mPages[i];
+        for (let i = 0; i < this.mPagesDrawable.length; i++) {
+            let page = this.mPagesDrawable[i];
             if (page.PageId < minPageId || page.PageId > maxPageId) {
                 page.dispose();
             }
@@ -233,20 +253,20 @@ export class PagesManager {
 
 
         //add new pages
-        this.mPages = []
+        this.mPagesDrawable = []
         for (let pageId = minPageId; pageId <= maxPageId; pageId++) {
 
             //if this page aleady loaded then just use the old instance
             if (oldVisisblePages[pageId]) {
-                this.mPages.push(oldVisisblePages[pageId]);
+                this.mPagesDrawable.push(oldVisisblePages[pageId]);
                 continue;
             }
             //create new Page instance and load the image asset
-            let page = new PageDrawable(pageId, this.mAssetsManager, formatString(this.mPagesBaseUrl, padLeft(pageId + '', 3, '0')), this.mGl, this.mLoadingPageSprite);
+            let page = new PageDrawable(pageId, this.mAssetsManager,this.mPages.get(pageId).imagePath , this.mGl, this.mLoadingPageSprite);
             let pageIndex = pageId - this.mFirstPageId;
             page.postTranslation(0, this.mPageHeight * pageIndex);
             page.postScale(this.mPageWidth, this.mPageHeight);
-            this.mPages.push(page);
+            this.mPagesDrawable.push(page);
         }
 
 
@@ -265,8 +285,8 @@ export class PagesManager {
             return;
         shader.beginDraw(projectionView);
         //           console.log(cameraView);
-        for (let i = 0, l = this.mPages.length; i < l; i++) {
-            this.mPages[i].draw(shader, cameraView);
+        for (let i = 0, l = this.mPagesDrawable.length; i < l; i++) {
+            this.mPagesDrawable[i].draw(shader, cameraView);
         }
         shader.endDraw();
     }

@@ -2,6 +2,16 @@ import {BaseGame}from '../engine/core/';
 import {FPSCounter} from '../engine/misc/';
 import {PagesManager} from './pages-manager';
 import {CameraController} from './camera';
+import {Page} from './page';
+
+import formatString = require('string-format');
+import padLeft = require('pad-left');
+
+
+const PAGE_BITMAP_WIDTH = 1200;
+const PAGE_BITMAP_HEIGHT = 1650;
+
+
 /**
  * Book Viewer Application main class
  * 
@@ -37,8 +47,19 @@ export class BookViewerApp extends BaseGame {
 
     constructor(parentElementId: string) {
         super({}, parentElementId);
-        this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager, 
-            20, 30, './media/{0}.jpg');
+
+        const pages: Page[] = [];
+        const pageImageBaseUrl = './media/{0}.jpg'
+        for (let i = 20; i <= 30; i++) {
+            pages.push({ imagePath: formatString(pageImageBaseUrl, padLeft(i + '', 3, '0')), id: i });
+        }
+
+
+
+        
+
+        this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager,
+            pages,PAGE_BITMAP_WIDTH,PAGE_BITMAP_HEIGHT);
         this.mCameraController = new CameraController(this.mCanvas, this.mCamera, this.mPagesManager);
         this.fpsCounter = new FPSCounter(parentElementId);
 
