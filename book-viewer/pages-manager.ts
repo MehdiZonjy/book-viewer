@@ -6,7 +6,7 @@ import formatString = require('string-format');
 import padLeft = require('pad-left');
 import {Page} from './page';
 import {SimpleTextureShader} from '../engine/shaders';
-import {Atlas, AtlasEntry} from '../engine/atlas';
+import {Atlas, AtlasTextureEntry} from '../engine/atlas';
 
 /**
  * Manages book pages, and efficiently updating which page should be loaded/unloaded
@@ -131,7 +131,7 @@ export class PagesManager {
             const atlasData: any = this.mAssetsManager.getAsset('./media/loading/loading.json');
             const atlasImage = this.mAssetsManager.getAsset<HTMLImageElement>('./media/loading/loading.png');
             const atlasTexture = new Texture(this.mGl, atlasImage);
-            const atlasEntries: AtlasEntry[] = atlasData.TextureAtlas.SubTexture;
+            const atlasEntries: AtlasTextureEntry[] = atlasData.TextureAtlas.SubTexture;
             const spriteWidth = atlasEntries[0]._width;
             const spriteHeight = atlasEntries[0]._height;
             const atlas = new Atlas(atlasTexture, atlasEntries);

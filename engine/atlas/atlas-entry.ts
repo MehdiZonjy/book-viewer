@@ -1,4 +1,4 @@
-export interface AtlasEntry{
+export interface AtlasTextureEntry{
     "_name":string,
     "_x":number,
     "_y":number,
@@ -6,3 +6,4 @@ export interface AtlasEntry{
     "_height":number
 
 }
+

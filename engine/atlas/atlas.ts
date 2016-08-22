@@ -1,8 +1,8 @@
 import {IDisposable, Texture} from '../core';
-import {AtlasEntry} from './atlas-entry';
+import {AtlasTextureEntry} from './atlas-entry';
 export class Atlas implements IDisposable {
     private mDisposed: boolean;
-    constructor(private mAtlasTexture: Texture, private mEntries: AtlasEntry[]) {
+    constructor(private mAtlasTexture: Texture, private mEntries: AtlasTextureEntry[]) {
         this.convertToTexcoord();
     }
     private convertToTexcoord() {
@@ -21,7 +21,7 @@ export class Atlas implements IDisposable {
         return this.mEntries.length;
     }
 
-    public getEntry(index: number): AtlasEntry {
+    public getEntry(index: number): AtlasTextureEntry {
         return this.mEntries[index];
     }
     public dispose() {

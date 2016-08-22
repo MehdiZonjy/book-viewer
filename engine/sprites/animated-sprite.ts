@@ -1,4 +1,4 @@
-import {Atlas, AtlasEntry} from '../atlas';
+import {Atlas, AtlasTextureEntry} from '../atlas';
 import {BaseSprite} from './base-sprite';
 import {PositionTexcoordVBO} from '../vertex-buffers';
 import {PositionTexcoordShader} from '../shaders';
