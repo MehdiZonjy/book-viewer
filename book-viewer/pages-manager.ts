@@ -211,12 +211,13 @@ export class PagesManager implements IDisposable {
 
 
         let oldVisisblePages: any = {};
+        const pagesToDispose: PageDrawable[] = [];
         //of the loaded pages find which ones outside {minPageId},{maxPageId} range and dispose  them 
         //and keep a reference to the visisble ones in {oldVisisblePages}
         for (let i = 0; i < this.mPagesDrawable.length; i++) {
             let page = this.mPagesDrawable[i];
             if (page.PageId < minPageId || page.PageId > maxPageId) {
-                page.dispose();
+                pagesToDispose.push(page);// page.dispose();
             }
             else
                 oldVisisblePages[page.PageId] = page;
@@ -239,6 +240,8 @@ export class PagesManager implements IDisposable {
             page.postScale(this.mPageWidth, this.mPageHeight);
             this.mPagesDrawable.push(page);
         }
+        for (let i = 0; i < pagesToDispose.length; i++)
+            pagesToDispose[i].dispose();
 
 
     }
@@ -265,7 +268,7 @@ export class PagesManager implements IDisposable {
     dispose() {
         this.mOnSizeChangedSubscription.unsubscribe();
         this.mPagesDrawable.forEach((page) => page.dispose());
-        this.mPagesDrawable=[];
+        this.mPagesDrawable = [];
     }
 
 }

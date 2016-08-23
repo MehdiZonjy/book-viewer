@@ -1,10 +1,11 @@
+import {IDisposable} from '../core';
 /**
  * 
  * Calculates the FPS of the game and displays it using an absolute DIV
  * @export
  * @class FPSCounter
  */
-export class FPSCounter{
+export class FPSCounter implements IDisposable{
     private mFPS:number;
     /**
      * frames counted in this second 
@@ -63,6 +64,10 @@ export class FPSCounter{
     }
     draw(){
         this.mFPSContainer.innerHTML = 'FPS: '+this.mFPS.toFixed(2);
+    }
+
+    dispose(){
+        this.mFPSContainer.remove();
     }
     
 }

@@ -24,7 +24,7 @@ export class AnimatedSprite extends BaseSprite {
                 //x1,y1
                 1, 0,
                 //texCoordX1,texCoordY1  
-                frameEntry._x+ frameEntry._width, frameEntry._y,
+                frameEntry._x + frameEntry._width, frameEntry._y,
                 //x2,y2
                 0, 0,
                 //texCoordX2,texCoordY2
@@ -71,13 +71,15 @@ export class AnimatedSprite extends BaseSprite {
         if (this.mFrameElapsedTime > this.mTimePerFrame) {
             this.mFrameElapsedTime = this.mFrameElapsedTime - this.mTimePerFrame;
             this.mCurrentFrame++;
-            this.mCurrentFrame%=this.mSpriteAtlas.EntriesCount;
+            this.mCurrentFrame %= this.mSpriteAtlas.EntriesCount;
 
         }
     }
 
-    private dispose() {
-
+     dispose() {
+        for (let i = 0; i < this.mVBOs.length; i++)
+            this.mVBOs[i].dispose();
+        this.mVBOs = [];
     }
 
 }

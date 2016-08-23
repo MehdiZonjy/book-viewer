@@ -111,6 +111,15 @@ export class BookViewerApp extends BaseGame {
         this.mPagesManager && this.mPagesManager.draw(this.mSimpleTextureShader, this.mCamera.Projection, this.mCamera.View);
         this.fpsCounter.draw();
     }
+
+    dispose() {
+        this.mPagesManager.dispose();
+        this.mLoadingPageSprite.dispose();
+        this.mPagesManager = null;
+        this.mLoadingPageSprite = null;
+        this.fpsCounter.dispose(); 
+        super.dispose();
+    }
 }
 
 

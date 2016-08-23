@@ -1,6 +1,6 @@
 import {AssetEntry} from './asset-entry';
 import {ILoader} from './interfaces';
-
+import {IDisposable} from '../core';
 /**
  * handles async loading and storage of assets.
  * assets can be loaded in two ways
@@ -11,7 +11,7 @@ import {ILoader} from './interfaces';
  * @export
  * @class AssetsManager
  */
-export class AssetsManager {
+export class AssetsManager implements IDisposable {
     /**
      * holds a reference to all loaded assets 
      * 
@@ -261,8 +261,8 @@ export class AssetsManager {
             return;
         }
         let loader = this.mRegisteredLoaders.get(assetEntry.Loader);
-       // if (!assetEntry.LoaderArgs)
-       //     assetEntry.LoaderArgs = [];
+        // if (!assetEntry.LoaderArgs)
+        //     assetEntry.LoaderArgs = [];
         loader.load(assetEntry, assetEntry.LoaderArg).then(this.onAssetLoaded, this.onLoadAssetFaild);
         assetEntry.LoaderArg = null;
 
@@ -334,7 +334,16 @@ export class AssetsManager {
             group.onGroupLoaded = null;
         }
     }
+    dispose() {
+        while (this.mActiveRequests.size > 0)
+            this.cancelAssetLoadRequest(this.mActiveRequests.keys().return().value);
 
+        while (this.mAssetsStorage.size > 0) {
+            const asset = this.mAssetsStorage.values().next().value;// this.mAssetsStorage.keys().return().value;
+            this.mRegisteredLoaders.get(asset.Loader).unload(asset);
+            this.mAssetsStorage.delete(asset.Name);
+        }
+    }
 }
 
 /**

@@ -98,11 +98,11 @@ export class TexturedSprite extends BaseSprite implements IDisposable {
         spritesCount--;
         //if there are no more instances using the VBO then delete it.
         //TODO if i'm creating sprites and destroying them quickly maybe leaving the VBO in memroy will be more efficent
-        /*
+        
         if (spritesCount == 0) {
             vbo.dispose();// this.mGl.deleteBuffer(vbo);
             vbo = null;
-        }*/
+        }
     }
 
 }

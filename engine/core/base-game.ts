@@ -12,7 +12,7 @@ import {IDisposable} from './interfaces';
  * @abstract
  * @class BaseGame
  */
-export abstract class BaseGame implements IDisposable{
+export abstract class BaseGame implements IDisposable {
     /**
      * WebGL reference 
      * 
@@ -63,6 +63,8 @@ export abstract class BaseGame implements IDisposable{
      */
     private mLastFrameUpdate;
 
+    private mDisposed: boolean;
+
     protected mCanvasParent: JQuery;
     constructor(options, parentElementId: string) {
         //init
@@ -86,7 +88,7 @@ export abstract class BaseGame implements IDisposable{
         //register onResize event handler
         this.mCanvasParent = $(`#${parentElementId}`);
         $(window).resize(this.onCanvasResized);
-        
+
     }
 
 
@@ -108,6 +110,8 @@ export abstract class BaseGame implements IDisposable{
      * @private
      */
     private mainLoop = (now: number) => {
+        if (this.mDisposed)
+            return;
         //request another frame update to keep the MainLoop running
         requestAnimationFrame(this.mainLoop);
 
@@ -135,8 +139,16 @@ export abstract class BaseGame implements IDisposable{
     }
 
 
-    public dispose(){
-        $(window).unbind("resize",this.onCanvasResized);
+    public dispose() {
+        $(window).unbind("resize", this.onCanvasResized);
+        this.mSimpleColorShader.dispose();
+        this.mSimpleTextureShader.dispose();
+        this.mAssetsManager.dispose();
+        this.mCanvas.remove();
+        this.mCanvasParent = null;
+        this.mCanvas = null;
+        this.mDisposed = true;
+        this.mCamera.dispose();
     }
 
 
