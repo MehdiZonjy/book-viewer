@@ -1,16 +1,22 @@
 import {GestureDetector, IGestureCallback, CameraBounds} from './misc';
-import {Camera, IBounds} from '../../engine/core';
+import {Camera, IBounds, IDisposable} from '../../engine/core';
 import {range} from '../../engine/math';
 import {ScrollAnimator, ScaleAnimator, ScrollAnimationTrigger} from './animators';
 import {PagesManager} from '../pages-manager';
+import {ISubscription} from 'rxjs/Subscription';
+
+
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.75;
 
-export class CameraController implements IGestureCallback {
+export class CameraController implements IGestureCallback, IDisposable {
     private mGestureDetector: GestureDetector;
     private mFlingAnimator: ScrollAnimator;
     private mScaleAnimator: ScaleAnimator;
     private mCameraBounds: CameraBounds;
+
+    private mOnSizeChangedSubscription: ISubscription;
+
     constructor(private mCanvas: HTMLCanvasElement, private mCamera: Camera, private pagesManager: PagesManager) {
         this.mGestureDetector = new GestureDetector(this.mCanvas, this);
         this.mCameraBounds = new CameraBounds(this.mCamera, pagesManager);
@@ -18,7 +24,7 @@ export class CameraController implements IGestureCallback {
         this.mFlingAnimator = new ScrollAnimator(this.mCameraBounds, this.mCamera);
 
 
-        this.mCamera.OnSizeChanged.subscribe((bounds) => {
+        this.mOnSizeChangedSubscription = this.mCamera.OnSizeChanged.subscribe((bounds) => {
             setTimeout(() => {
                 this.mFlingAnimator.finish();
 
@@ -137,6 +143,10 @@ export class CameraController implements IGestureCallback {
     public update(deltaTime: number) {
         this.mFlingAnimator.update();
         this.mScaleAnimator.update();
+    }
+
+    dispose() {
+        this.mOnSizeChangedSubscription.unsubscribe();
     }
 
 }

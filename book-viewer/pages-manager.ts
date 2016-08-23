@@ -1,18 +1,20 @@
 import { AnimatedSprite} from '../engine/sprites/';
-import {Camera,  IBounds} from '../engine/core';
+import {IDisposable, Camera, IBounds} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
 import {PageDrawable} from './page-drawable';
 import {SimpleTextureShader} from '../engine/shaders';
 import {Page} from './page';
+import {ISubscription} from 'rxjs/Subscription';
+
 /**
  * Manages book pages, and efficiently updating which page should be loaded/unloaded
  * 
  * @export
  * @class PagesManager
  */
-export class PagesManager {
+export class PagesManager implements IDisposable {
 
-   
+
     /**
      * the bottom value of the last page in the book 
      * 
@@ -51,11 +53,11 @@ export class PagesManager {
      * @type {Page[]}
      */
     private mPagesDrawable: PageDrawable[];
-     /**
-     * 
-     * the id of the top most visisble page of the book 
-     * @private
-     */
+    /**
+    * 
+    * the id of the top most visisble page of the book 
+    * @private
+    */
     private mTopVisisblePageId;
     /**
      * 
@@ -79,11 +81,13 @@ export class PagesManager {
      */
     private mViewHeight: number;
 
-    private mFirstPageId:number;
-    private mLastPageId:number;
-    
+    private mFirstPageId: number;
+    private mLastPageId: number;
 
-    private mPages:Map<number,Page>;
+
+    private mPages: Map<number, Page>;
+
+    private mOnSizeChangedSubscription: ISubscription;
 
 
     /**
@@ -108,16 +112,16 @@ export class PagesManager {
      * @param {string} mPagesBaseUrl. url of the location from which to load the pages in the following formula such as './media/{0}.jpg'
      */
     constructor(private mGl: WebGLRenderingContext, private mCamera: Camera, private mAssetsManager: AssetsManager,
-    pages:Page[],private mPageBitmapWidth:number, private mPageBitmapHeight:number,private mLoadingPageSprite:AnimatedSprite
+        pages: Page[], private mPageBitmapWidth: number, private mPageBitmapHeight: number, private mLoadingPageSprite: AnimatedSprite
     ) {
         //this.mIsReady = false;
 
 
-        this.mLastPageId=  pages[pages.length-1].id;
+        this.mLastPageId = pages[pages.length - 1].id;
         this.mFirstPageId = pages[0].id;
 
-        this.mPages=new Map();
-        pages.forEach((page)=>this.mPages.set(page.id,page));
+        this.mPages = new Map();
+        pages.forEach((page) => this.mPages.set(page.id, page));
 
 
 
@@ -128,8 +132,8 @@ export class PagesManager {
 
 
         this.mPagesDrawable = [];
-        this.mCamera.OnSizeChanged.subscribe(this.onCameraSizeChanged);
-   
+        this.mOnSizeChangedSubscription = this.mCamera.OnSizeChanged.subscribe(this.onCameraSizeChanged);
+
         /* this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, null, (image) => {
              this.mLoadingPageTexture = new Texture(this.mGl, image);
              this.mIsReady = true;
@@ -139,7 +143,7 @@ export class PagesManager {
         this.mViewWidth = bounds.width;
         this.mViewHeight = bounds.height;
 
-        const bitmapAR =this.mPageBitmapWidth / this.mPageBitmapHeight;
+        const bitmapAR = this.mPageBitmapWidth / this.mPageBitmapHeight;
 
         this.mPageWidth = this.mViewWidth;
         this.mPageHeight = this.mPageWidth / bitmapAR;
@@ -159,8 +163,8 @@ export class PagesManager {
         this.mTopVisisblePageId = -1;
         this.mBottomVisisblePageId = -1;
 
-       // if (this.mIsReady)
-            this.updateVisisblePages();
+        // if (this.mIsReady)
+        this.updateVisisblePages();
 
     }
 
@@ -229,7 +233,7 @@ export class PagesManager {
                 continue;
             }
             //create new Page instance and load the image asset
-            let page = new PageDrawable(pageId, this.mAssetsManager,this.mPages.get(pageId).imagePath , this.mGl, this.mLoadingPageSprite);
+            let page = new PageDrawable(pageId, this.mAssetsManager, this.mPages.get(pageId).imagePath, this.mGl, this.mLoadingPageSprite);
             let pageIndex = pageId - this.mFirstPageId;
             page.postTranslation(0, this.mPageHeight * pageIndex);
             page.postScale(this.mPageWidth, this.mPageHeight);
@@ -248,14 +252,20 @@ export class PagesManager {
      * @returns
      */
     draw(shader: SimpleTextureShader, projectionView: Float32Array, cameraView: Float32Array) {
-      //  if (!this.mIsReady)
-      //      return;
+        //  if (!this.mIsReady)
+        //      return;
         shader.beginDraw(projectionView);
         //           console.log(cameraView);
         for (let i = 0, l = this.mPagesDrawable.length; i < l; i++) {
             this.mPagesDrawable[i].draw(shader, cameraView);
         }
         shader.endDraw();
+    }
+
+    dispose() {
+        this.mOnSizeChangedSubscription.unsubscribe();
+        this.mPagesDrawable.forEach((page) => page.dispose());
+        this.mPagesDrawable=[];
     }
 
 }

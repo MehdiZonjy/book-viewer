@@ -1,6 +1,7 @@
-import {Camera, IBounds} from '../../../engine/core';
+import {Camera, IBounds,IDisposable} from '../../../engine/core';
 import {PagesManager} from '../../pages-manager';
-export class CameraBounds {
+import {ISubscription} from 'rxjs/Subscription';
+export class CameraBounds implements IDisposable {
     private mVersion: number;
     private mMinX;
     private mMaxX;
@@ -12,8 +13,10 @@ export class CameraBounds {
     private mViewHeight;
     private mVisibleAreaWidth;
     private mVisibleAreaHeight;
-    constructor(private mCamera: Camera, private mPagesManager:PagesManager) {
-        this.mCamera.OnSizeChanged.subscribe((bounds) => {
+    private mOnSizeChangedSubscription: ISubscription;
+
+    constructor(private mCamera: Camera, private mPagesManager: PagesManager) {
+        this.mOnSizeChangedSubscription = this.mCamera.OnSizeChanged.subscribe((bounds) => {
             this.mViewWidth = bounds.width;
             this.mViewHeight = bounds.height;
             this.mVersion++;
@@ -74,4 +77,8 @@ export class CameraBounds {
 
     }
 
+
+    dispose(){
+        this.mOnSizeChangedSubscription.unsubscribe();
+    }
 }
