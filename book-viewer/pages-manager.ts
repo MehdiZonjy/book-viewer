@@ -1,10 +1,8 @@
-import {ColoredSprite, TexturedSprite, AnimatedSprite} from '../engine/sprites/';
-import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
-import {Camera, Texture, IBounds} from '../engine/core';
+import { AnimatedSprite} from '../engine/sprites/';
+import {Camera,  IBounds} from '../engine/core';
 import {AssetsManager} from '../engine/assets';
 import {PageDrawable} from './page-drawable';
 import {SimpleTextureShader} from '../engine/shaders';
-import {Atlas, AtlasTextureEntry} from '../engine/atlas';
 import {Page} from './page';
 /**
  * Manages book pages, and efficiently updating which page should be loaded/unloaded
@@ -53,20 +51,7 @@ export class PagesManager {
      * @type {Page[]}
      */
     private mPagesDrawable: PageDrawable[];
-    /**
-     * used to display a place holder until the book page is loaded
-     * 
-     * @private
-     */
-    private mLoadingPageSprite: AnimatedSprite;
-    /**
-     * true if PagesManager is fully loaded and ready to update and draw 
-     * 
-     * @private
-     * @type {boolean}
-     */
-    private mIsReady: boolean;
-    /**
+     /**
      * 
      * the id of the top most visisble page of the book 
      * @private
@@ -123,9 +108,9 @@ export class PagesManager {
      * @param {string} mPagesBaseUrl. url of the location from which to load the pages in the following formula such as './media/{0}.jpg'
      */
     constructor(private mGl: WebGLRenderingContext, private mCamera: Camera, private mAssetsManager: AssetsManager,
-    pages:Page[],private mPageBitmapWidth:number, private mPageBitmapHeight:number
+    pages:Page[],private mPageBitmapWidth:number, private mPageBitmapHeight:number,private mLoadingPageSprite:AnimatedSprite
     ) {
-        this.mIsReady = false;
+        //this.mIsReady = false;
 
 
         this.mLastPageId=  pages[pages.length-1].id;
@@ -144,24 +129,7 @@ export class PagesManager {
 
         this.mPagesDrawable = [];
         this.mCamera.OnSizeChanged.subscribe(this.onCameraSizeChanged);
-        //load place holder image 
-        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.json', TEXT_LOADER_TYPE, FileType.json);
-        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.png', IMAGE_LOADER_TYPE, null);
-        this.mAssetsManager.startGroupRequest('loading', () => {
-            const atlasData: any = this.mAssetsManager.getAsset('./media/loading/loading.json');
-            const atlasImage = this.mAssetsManager.getAsset<HTMLImageElement>('./media/loading/loading.png');
-            const atlasTexture = new Texture(this.mGl, atlasImage);
-            const atlasEntries: AtlasTextureEntry[] = atlasData.TextureAtlas.SubTexture;
-            const spriteWidth = atlasEntries[0]._width;
-            const spriteHeight = atlasEntries[0]._height;
-            const atlas = new Atlas(atlasTexture, atlasEntries);
-
-            this.mLoadingPageSprite = new AnimatedSprite(this.mGl, 20, atlas);
-            this.mLoadingPageSprite.postTranslation(0, 0);
-            this.mLoadingPageSprite.setWidth(spriteWidth);
-            this.mLoadingPageSprite.setHeight(spriteHeight);
-            this.mIsReady = true;
-        });
+   
         /* this.mAssetsManager.loadAsset('media/doge.jpeg', IMAGE_LOADER_TYPE, null, (image) => {
              this.mLoadingPageTexture = new Texture(this.mGl, image);
              this.mIsReady = true;
@@ -191,7 +159,7 @@ export class PagesManager {
         this.mTopVisisblePageId = -1;
         this.mBottomVisisblePageId = -1;
 
-        if (this.mIsReady)
+       // if (this.mIsReady)
             this.updateVisisblePages();
 
     }
@@ -204,10 +172,9 @@ export class PagesManager {
      * @returns
      */
     update(deltaTime: number) {
-        if (!this.mIsReady)
-            return;
+        //if (!this.mIsReady)
+        //    return;
 
-        this.mLoadingPageSprite.update(deltaTime);
         this.updateVisisblePages();
 
     }
@@ -281,8 +248,8 @@ export class PagesManager {
      * @returns
      */
     draw(shader: SimpleTextureShader, projectionView: Float32Array, cameraView: Float32Array) {
-        if (!this.mIsReady)
-            return;
+      //  if (!this.mIsReady)
+      //      return;
         shader.beginDraw(projectionView);
         //           console.log(cameraView);
         for (let i = 0, l = this.mPagesDrawable.length; i < l; i++) {
