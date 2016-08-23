@@ -10,9 +10,33 @@ const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.75;
 
 export class CameraController implements IGestureCallback, IDisposable {
+    /**
+     * handles fling, pan gestures 
+     * 
+     * @private
+     * @type {GestureDetector}
+     */
     private mGestureDetector: GestureDetector;
+    /**
+     * animates fling scroll and pull-back-to-bounds 
+     * 
+     * @private
+     * @type {ScrollAnimator}
+     */
     private mFlingAnimator: ScrollAnimator;
+    /**
+     * animates scale
+     * 
+     * @private
+     * @type {ScaleAnimator}
+     */
     private mScaleAnimator: ScaleAnimator;
+    /**
+     * holds camera view bounds
+     * 
+     * @private
+     * @type {CameraBounds}
+     */
     private mCameraBounds: CameraBounds;
 
     private mOnSizeChangedSubscription: ISubscription;
