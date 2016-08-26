@@ -1,4 +1,4 @@
-import {BaseGame, Texture}from '../engine/core/';
+import {BaseGame, Texture, IGameOptions}from '../engine/core/';
 import {FPSCounter} from '../engine/misc/';
 import {PagesManager} from './pages-manager';
 import {CameraController} from './camera';
@@ -6,15 +6,17 @@ import {Atlas, AtlasTextureEntry} from '../engine/atlas';
 
 import {Page} from './page';
 import { FileType, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../engine/assets';
-
-
-import formatString = require('string-format');
-import padLeft = require('pad-left');
 import { AnimatedSprite} from '../engine/sprites/';
 
 
-const PAGE_BITMAP_WIDTH = 1200;
-const PAGE_BITMAP_HEIGHT = 1650;
+export interface IBookViewerOptions extends IGameOptions {
+    showFPS?: boolean,
+    pageBitmapWidth: number,
+    pageBitmapHeight: number,
+    loadingSpriteAtlasData: string,
+    loadingSpriteImage: string,
+    pages: Page[],
+}
 
 
 /**
@@ -50,25 +52,40 @@ export class BookViewerApp extends BaseGame {
      */
     private mCameraController: CameraController;
     private mLoadingPageSprite: AnimatedSprite;
-    constructor(parentElementId: string) {
-        super({}, parentElementId);
+    constructor(options: IBookViewerOptions) {
+        super(options);
+        this.validateOptions(options);
+        this.loadResources(options.pageBitmapWidth, options.pageBitmapHeight, options.loadingSpriteAtlasData, options.loadingSpriteImage, options.pages);
+        if (options.showFPS)
+            this.fpsCounter = new FPSCounter(options.containerId);
 
-        this.loadResources();
-        this.fpsCounter = new FPSCounter(parentElementId);
-
+    }
+    /**
+     * validates options 
+     * 
+     * @private
+     * @param {IBookViewerOptions} options
+     */
+    private validateOptions(options: IBookViewerOptions) {
+        options.loadingSpriteAtlasData || console.error("Missing loadingSpriteAtlasData parameter");
+        options.loadingSpriteImage || console.error("Missing loadingSpriteImage parameter");
+        options.pageBitmapHeight || console.error("Missing pageBitmapHeight parameter");
+        options.pageBitmapWidth || console.error("Missing pageBitmapWidth parameter");
+        options.pages || console.error("Missing pages parameter");
     }
     /**
      * loads the LoadingPage animated sprite and initilizes PagesManager and Camera 
      * 
      * @private
      */
-    private loadResources() {
+    private loadResources(pageBitmapWidth: number, pageBitmapHeight: number,
+        loadingSpriteAtlasData: string, loadingSpriteImage: string, pages: Page[]) {
         //load place holder image 
-        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.json', TEXT_LOADER_TYPE, FileType.json);
-        this.mAssetsManager.addAssetToGroup('loading', './media/loading/loading.png', IMAGE_LOADER_TYPE, null);
-        this.mAssetsManager.startGroupRequest('loading', () => {
-            const atlasData: any = this.mAssetsManager.getAsset('./media/loading/loading.json');
-            const atlasImage = this.mAssetsManager.getAsset<HTMLImageElement>('./media/loading/loading.png');
+        this.mAssetsManager.addAssetToGroup('loadingSprite', loadingSpriteAtlasData, TEXT_LOADER_TYPE, FileType.json);
+        this.mAssetsManager.addAssetToGroup('loadingSprite', loadingSpriteImage, IMAGE_LOADER_TYPE, null);
+        this.mAssetsManager.startGroupRequest('loadingSprite', () => {
+            const atlasData: any = this.mAssetsManager.getAsset(loadingSpriteAtlasData);
+            const atlasImage = this.mAssetsManager.getAsset<HTMLImageElement>(loadingSpriteImage);
             const atlasTexture = new Texture(this.mGl, atlasImage);
             const atlasEntries: AtlasTextureEntry[] = atlasData.TextureAtlas.SubTexture;
             const spriteWidth = atlasEntries[0]._width;
@@ -81,14 +98,9 @@ export class BookViewerApp extends BaseGame {
             this.mLoadingPageSprite.setHeight(spriteHeight);
 
 
-            const pages: Page[] = [];
-            const pageImageBaseUrl = './media/pages/{0}.jpg'
-            for (let i = 20; i <= 30; i++) {
-                pages.push({ imagePath: formatString(pageImageBaseUrl, padLeft(i + '', 3, '0')), id: i });
-            }
 
             this.mPagesManager = new PagesManager(this.mGl, this.mCamera, this.mAssetsManager,
-                pages, PAGE_BITMAP_WIDTH, PAGE_BITMAP_HEIGHT, this.mLoadingPageSprite);
+                pages, pageBitmapWidth, pageBitmapHeight, this.mLoadingPageSprite);
             this.mCameraController = new CameraController(this.mCanvas, this.mCamera, this.mPagesManager);
 
         });
@@ -100,7 +112,7 @@ export class BookViewerApp extends BaseGame {
 
         this.mLoadingPageSprite && this.mLoadingPageSprite.update(deltaTime);
 
-        this.fpsCounter.update(deltaTime);
+        this.fpsCounter && this.fpsCounter.update(deltaTime);
         this.mCameraController && this.mCameraController.update(deltaTime);
         this.mPagesManager && this.mPagesManager.update(deltaTime);
 
@@ -109,7 +121,7 @@ export class BookViewerApp extends BaseGame {
     protected draw(deltaTime) {
         this.clearColor(0, 0, 0);
         this.mPagesManager && this.mPagesManager.draw(this.mSimpleTextureShader, this.mCamera.Projection, this.mCamera.View);
-        this.fpsCounter.draw();
+        this.fpsCounter && this.fpsCounter.draw();
     }
 
     dispose() {
@@ -117,7 +129,7 @@ export class BookViewerApp extends BaseGame {
         this.mLoadingPageSprite.dispose();
         this.mPagesManager = null;
         this.mLoadingPageSprite = null;
-        this.fpsCounter.dispose(); 
+        this.fpsCounter && this.fpsCounter.dispose();
         super.dispose();
     }
 }

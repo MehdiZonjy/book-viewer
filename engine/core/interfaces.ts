@@ -6,3 +6,9 @@ export interface IDisposable{
 export interface IBounds{
     width:number,height:number;
 }
+
+
+export interface IGameOptions{
+    containerId:string,
+    showLog:boolean
+}

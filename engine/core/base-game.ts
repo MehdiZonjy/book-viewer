@@ -2,7 +2,8 @@ import {SimpleColorShader, SimpleTextureShader} from '../shaders';
 import {Camera} from './';
 import {AssetsManager, TextAssetLoader, ImageAssetLoader, IMAGE_LOADER_TYPE, TEXT_LOADER_TYPE} from '../assets';
 import * as $ from 'jquery';
-import {IDisposable} from './interfaces';
+import {IDisposable,IGameOptions} from './interfaces';
+
 /// <reference path="../gl-matrix.d.ts" />
 
 /**
@@ -66,9 +67,11 @@ export abstract class BaseGame implements IDisposable {
     private mDisposed: boolean;
 
     protected mCanvasParent: JQuery;
-    constructor(options, parentElementId: string) {
+    constructor(options:IGameOptions) {
+        if(!options.containerId)
+            console.error("Missing ContainerId parameter");
         //init
-        this.mCanvas = createCanvas(parentElementId);
+        this.mCanvas = createCanvas(options.containerId);
         this.mGl = createWebGLContext(this.mCanvas);
 
 
@@ -86,7 +89,7 @@ export abstract class BaseGame implements IDisposable {
         requestAnimationFrame(this.mainLoop);
 
         //register onResize event handler
-        this.mCanvasParent = $(`#${parentElementId}`);
+        this.mCanvasParent = $(`#${options.containerId}`);
         $(window).resize(this.onCanvasResized);
 
     }
