@@ -7,6 +7,16 @@
         body {
             margin: 0px;
         }
+        #game-container{
+            width:100%;
+            height:100%;
+            position:relative;
+        }
+        #dispose{
+            position:absolute;
+            top:0px;
+            left:200px;
+        }
     </style>
     <script>
         function dispose(){
@@ -16,8 +26,8 @@
 </head>
 
 <body onload="window.bookViewerApp = new BookViewer.BookViewerApp('game-container');">
-    <div style="height:20px"><button onclick="dispose();">Dispose</button></div>
-    <div id="game-container" style="width:100%;height:calc(100% - 20px);position:relative;">
+    <div id="game-container">
+        <button id="dispose" onclick="dispose();">Dispose</button>
     </div>
 </body>
 
