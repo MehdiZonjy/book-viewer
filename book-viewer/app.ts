@@ -82,7 +82,7 @@ export class BookViewerApp extends BaseGame {
 
 
             const pages: Page[] = [];
-            const pageImageBaseUrl = './media/{0}.jpg'
+            const pageImageBaseUrl = './media/pages/{0}.jpg'
             for (let i = 20; i <= 30; i++) {
                 pages.push({ imagePath: formatString(pageImageBaseUrl, padLeft(i + '', 3, '0')), id: i });
             }
