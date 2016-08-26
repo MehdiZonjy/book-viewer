@@ -1,0 +1,217 @@
+{
+  "TextureAtlas": {
+    "SubTexture": [
+      {
+        "_name": "Symbol 2 instance 10000",
+        "_x": "0",
+        "_y": "0",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10001",
+        "_x": "160",
+        "_y": "0",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10002",
+        "_x": "320",
+        "_y": "0",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10003",
+        "_x": "0",
+        "_y": "40",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10004",
+        "_x": "160",
+        "_y": "40",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10005",
+        "_x": "320",
+        "_y": "40",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10006",
+        "_x": "0",
+        "_y": "80",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10007",
+        "_x": "160",
+        "_y": "80",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10008",
+        "_x": "320",
+        "_y": "80",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10009",
+        "_x": "0",
+        "_y": "120",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10010",
+        "_x": "160",
+        "_y": "120",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10011",
+        "_x": "320",
+        "_y": "120",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10012",
+        "_x": "0",
+        "_y": "160",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10013",
+        "_x": "160",
+        "_y": "160",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10014",
+        "_x": "320",
+        "_y": "160",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10015",
+        "_x": "0",
+        "_y": "200",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10016",
+        "_x": "160",
+        "_y": "200",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10017",
+        "_x": "320",
+        "_y": "200",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10018",
+        "_x": "0",
+        "_y": "240",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10019",
+        "_x": "160",
+        "_y": "240",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10020",
+        "_x": "320",
+        "_y": "240",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10021",
+        "_x": "0",
+        "_y": "280",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10022",
+        "_x": "160",
+        "_y": "280",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10023",
+        "_x": "320",
+        "_y": "280",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10024",
+        "_x": "0",
+        "_y": "320",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10025",
+        "_x": "160",
+        "_y": "320",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10026",
+        "_x": "320",
+        "_y": "320",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10027",
+        "_x": "0",
+        "_y": "360",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10028",
+        "_x": "160",
+        "_y": "360",
+        "_width": "160",
+        "_height": "40"
+      },
+      {
+        "_name": "Symbol 2 instance 10029",
+        "_x": "320",
+        "_y": "360",
+        "_width": "160",
+        "_height": "40"
+      }
+    ],
+    "_imagePath": "loading.png"
+  }
+}
