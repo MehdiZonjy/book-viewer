@@ -15,7 +15,11 @@
         #dispose{
             position:absolute;
             top:0px;
-            left:200px;
+            right:0px;
+        }
+        #dispose img{
+            width:32px;
+            height:32px;
         }
     </style>
     <script>
@@ -27,7 +31,7 @@
 
 <body onload="window.bookViewerApp = new BookViewer.BookViewerApp('game-container');">
     <div id="game-container">
-        <button id="dispose" onclick="dispose();">Dispose</button>
+        <a onclick="dispose();" href="javascript:void(0)" id="dispose"><img src="media/delete.png"/></a>
     </div>
 </body>
 
