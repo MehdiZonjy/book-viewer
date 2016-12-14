@@ -10,7 +10,7 @@ It supports mobile well. I managed to get around 40 fps on Samsung Galaxy S3 and
 
 
 ## Live Demo:
-you can see the book-viewer live in action [over here](https://dl.dropboxusercontent.com/u/37393408/book-viewer/index.html).
+you can see the book-viewer live in action [over here](https://mzmuse.com/projects/book-viewer/index.html).
 
 ## How To Run The Included Demo:
 1. Install dependencies
